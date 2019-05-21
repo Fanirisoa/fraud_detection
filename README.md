@@ -1,8 +1,9 @@
 # fraud_detection
 
-### 
+### Paths 
 
-
+    inputPath = "/tmp/incoming/fraudDetection/"
+    savePath = "/tmp/fraudResults/"
 
 
 #### References :
