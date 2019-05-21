@@ -14,7 +14,7 @@
 - [Predicting Fraud in Financial Payment Services](https://www.kaggle.com/arjunjoshua/predicting-fraud-in-financial-payment-services).
 - [Financial Fraud Detection-XGBoost](https://www.kaggle.com/georgepothur/4-financial-fraud-detection-xgboost).
 
-
+- [TalkingData AdTracking Fraud Detection Challenge](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection/discussion/56777#latest-329919).
 
 
 
