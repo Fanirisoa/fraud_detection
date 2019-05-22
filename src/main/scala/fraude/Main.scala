@@ -82,17 +82,20 @@ object Main extends SparkJob with StrictLogging{
 
 
     val timeA01= System.nanoTime
-    //  val discreteDataset = Metrics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
+    val discreteDataset = Metrics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
     val continuousDataset=  Metrics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
     val durationA01= (System.nanoTime - timeA01) / 1e9d
     println("Time to compute  all the metrics: " + durationA01)
 
+    discreteDataset.show(20)
+    continuousDataset.show(20)
+
 
     val timeA02= System.nanoTime
-   // val resultatSaveTitanic : DataFrame = unionDisContMetric( discreteDataset,continuousDataset,savePathData: Path)
+    val resultatSaveTitanic : DataFrame = unionDisContMetric( discreteDataset,continuousDataset,savePathData: Path)
     val durationA02= (System.nanoTime - timeA02) / 1e9d
     println("Time to make the union and to save : " + durationA02)
-   // discreteDataset.show()
+    resultatSaveTitanic.show()
 
 
   }

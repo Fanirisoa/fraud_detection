@@ -196,8 +196,6 @@ object Metrics extends StrictLogging {
       .map(str => str.replaceAll("\\(" + nameCol + "\\)", ""))
       .map(_.capitalize)
 
-    addVariablesColumn.show(4)
-
     addVariablesColumn.toDF(removeNameColumnMetric: _*)
 
 
