@@ -23,6 +23,8 @@ package fraude
 import com.typesafe.scalalogging.StrictLogging
 import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
+import fraude.metricsJob.MetricsJob._
+import fraude.metricsJob.Metrics
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.DataFrame
@@ -45,36 +47,52 @@ object Main extends SparkJob with StrictLogging{
     }
 
 
-    val filename: String = "iris"
-    val inputPathData: Path = new Path(Settings.sparktrain.inputPath ++ filename +"/"+ filename ++".csv")
-
-    val listContnuousAttributes: List[String] = Seq("SepalLength", "SepalWidth","PetalLength","PetalWidth").toList
-    val listDiscreteAttributes: List[String] = Seq("Name").toList
-
-    val inputDataFrame1: DataFrame = {
-      read(inputPathData)
-    }
+    println("----------------------------")
+    println("   Load the dataset.csv    :")
+    println("----------------------------")
 
 
-    val filenametitanic: String = "titanic"
-    val inputPathData2: Path = new Path(Settings.sparktrain.inputPath ++ filenametitanic +"/"+ filenametitanic ++".csv")
+    val filename: String = "creditcard"
+    val inputPathData: Path = new Path(Settings.sparktrain.inputPath ++ "fraud_detection" +"/"+ filename ++".csv")
 
-    val inputDataFrame2: DataFrame = read(inputPathData2)
-
-    val titanicContinuousAttributes: List[String] = Seq("Fare", "Age").toList
-    val titanicDiscreteAttributes: List[String] = Seq("Survived", "Pclass","Siblings","Parents","Sex").toList
+    val inputDataFrame: DataFrame =  read(inputPathData)
+    inputDataFrame.show(20)
 
 
-    val filenametafeng: String = "tafeng"
-    val inputPathData3: Path = new Path(Settings.sparktrain.inputPath ++ filenametafeng +"/"+ filenametafeng ++".csv")
-
-    val inputDataFrame3: DataFrame =read(inputPathData3)
-
-    val tafengContinuousAttributes: List[String] =  Seq("AMOUNT","ASSET","SALES_PRICE").toList
-    val tafengDiscreteAttributes: List[String] = Seq("TRANSACTION_DT","CUSTOMER_ID","AGE_GROUP","PIN_CODE","PRODUCT_SUBCLASS","PRODUCT_ID").toList
+    println("----------------------------")
+    println("  Test With Titanic data set:")
+    println("----------------------------")
+    val totalDiscreteMetrics: List[Metrics.DiscreteMetric] = List(Metrics.Category, Metrics.CountDistinct, Metrics.CountDiscrete, Metrics.Frequencies,Metrics.CountMissValuesDiscrete)
+    val discreteOperation: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
 
 
+    val discreteOps: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
+    val continuousOps:  List[Metrics.ContinuousMetric] = totalContMetric
 
+
+    val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "testMetricTitanic/")
+
+
+    val dataUse: DataFrame = inputDataFrame2
+
+    val discAttrs: List[String] = titanicDiscreteAttributes
+    val continAttrs: List[String] = titanicContinuousAttributes
+
+    val timeA01= System.nanoTime
+    val discreteDatasetTitanic = Metrics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
+    val continuousDatasetTitanic =  Metrics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
+    val durationA01= (System.nanoTime - timeA01) / 1e9d
+    println("Time to compute  all the metrics: " + durationA01)
+
+    val timeA02= System.nanoTime
+    val resultatSaveTitanic : DataFrame = unionDisContMetric( discreteDatasetTitanic,continuousDatasetTitanic,
+      "domain",
+      "schema",
+      "ingestionTime",
+      "stageState",savePathData: Path)
+    val durationA02= (System.nanoTime - timeA02) / 1e9d
+    println("Time to make the union and to save : " + durationA02)
+    resultatSaveTitanic.show()
 
 
   }

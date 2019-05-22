@@ -20,7 +20,7 @@
 
 package fraude.confSpark.handler
 
-import metric.analysis.conf.HdfsConf._
+import fraude.confSpark.conf.HdfsConf._
 import org.apache.hadoop.fs.{FileSystem, Path}
 
 object HdfsHandler {

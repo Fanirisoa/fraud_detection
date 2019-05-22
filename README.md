@@ -5,6 +5,49 @@
     inputPath = "/tmp/incoming/fraudDetection/"
     savePath = "/tmp/fraudResults/"
 
+######  We need to set the environment variables to the path of the spark 
+
+If I want to use local path as initial path, I use the following environment :
+
+    
+    SPARK_CONF_DIR=/Library/spark-2.1.2/
+    
+
+If I want to use HDFS path as initial path, I use the following environment :
+
+    
+    SPARK_CONF_DIR=/usr/local/Cellar/spark-2.4.1-bin-hadoop2.7/conf
+    
+
+    
+######  We need to put the data in the input path in HDFS :
+
+- Create the allData directory in HDFS :
+    
+    
+        $ hdfs dfs -mkdir /tmp/incoming/fraudDetection/
+    
+
+- Insert the data in `/Users/fanirisoa/Documents/allData/fraud_detection`
+
+
+        hdfs dfs -put /Users/fanirisoa/Documents/allData/fraud_detection/  /tmp/incoming/fraudDetection/
+    
+    
+    
+    
+- Delete the saving path it is already exist
+
+        
+       hdfs dfs -rmr /tmp/testResults/testMetricTitanic /tmp/testResults/testMetricIris /tmp/testResults/testMetricTafeng
+  
+  
+    
+    
+    
+    
+    
+    
 
 #### References :
 - [Séries temporelles de détection d'anomalies de prix](https://supportivy.com/series-temporelles-de-detection-danomalies-de-prix-vers-la-science-des-donnees/).

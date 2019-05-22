@@ -20,8 +20,8 @@
 
 package fraude.sparkjob
 
-import metric.analysis.conf.HdfsConf._
-import metric.analysis.handler.HdfsHandler._
+import fraude.confSpark.conf.HdfsConf._
+import fraude.confSpark.handler.HdfsHandler._
 import org.apache.hadoop.fs.Path
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
@@ -86,7 +86,7 @@ trait  SparkJob {
   /**
     * Saves a DataSet of generic type T into a parquet file
     * @param path path to save the dataframe in
-    * @param df   DataSet to save
+    * @param ds  DataSet to save
     * @return boolean corresponds to whether or not the path exists
     */
   def saveParquet[T](path: Path, ds: Dataset[T]): Boolean = {
