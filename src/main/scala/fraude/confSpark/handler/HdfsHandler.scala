@@ -18,7 +18,7 @@
  *
  */
 
-package handler
+package fraude.confSpark.handler
 
 import metric.analysis.conf.HdfsConf._
 import org.apache.hadoop.fs.{FileSystem, Path}

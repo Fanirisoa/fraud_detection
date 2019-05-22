@@ -18,7 +18,7 @@
  *
  */
 
-package conf
+package fraude.confSpark.conf
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.hadoop.conf.Configuration

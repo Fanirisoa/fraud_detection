@@ -1,4 +1,4 @@
-package conf
+package fraude.confSpark.conf
 
 import com.typesafe.config.{Config, ConfigFactory}
 import configs.syntax._
