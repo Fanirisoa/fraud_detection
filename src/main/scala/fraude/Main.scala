@@ -58,41 +58,41 @@ object Main extends SparkJob with StrictLogging{
     val inputDataFrame: DataFrame =  read(inputPathData)
     inputDataFrame.show(20)
 
+    val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
+    val listDiscreteAttributes: List[String] =     Seq("Class").toList
 
-    println("----------------------------")
-    println("  Test With Titanic data set:")
-    println("----------------------------")
+
+    println("--------------------")
+    println("  Compute Metrics  :")
+    println("--------------------")
     val totalDiscreteMetrics: List[Metrics.DiscreteMetric] = List(Metrics.Category, Metrics.CountDistinct, Metrics.CountDiscrete, Metrics.Frequencies,Metrics.CountMissValuesDiscrete)
-    val discreteOperation: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
+    val totalContMetric : List[Metrics.ContinuousMetric]=  List(Metrics.Min, Metrics.Max, Metrics.Mean, Metrics.Count, Metrics.Variance, Metrics.Stddev, Metrics.Sum, Metrics.Skewness, Metrics.Kurtosis, Metrics.Percentile25, Metrics.Median, Metrics.Percentile75, Metrics.CountMissValues)
 
 
     val discreteOps: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
     val continuousOps:  List[Metrics.ContinuousMetric] = totalContMetric
 
 
-    val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "testMetricTitanic/")
+    val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "MetricResult/")
 
+    val dataUse: DataFrame = inputDataFrame
 
-    val dataUse: DataFrame = inputDataFrame2
+    val continAttrs: List[String] = listContnuousAttributes
+    val discAttrs: List[String] = listDiscreteAttributes
 
-    val discAttrs: List[String] = titanicDiscreteAttributes
-    val continAttrs: List[String] = titanicContinuousAttributes
 
     val timeA01= System.nanoTime
-    val discreteDatasetTitanic = Metrics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
-    val continuousDatasetTitanic =  Metrics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
+    //  val discreteDataset = Metrics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
+    val continuousDataset=  Metrics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
     val durationA01= (System.nanoTime - timeA01) / 1e9d
     println("Time to compute  all the metrics: " + durationA01)
 
+
     val timeA02= System.nanoTime
-    val resultatSaveTitanic : DataFrame = unionDisContMetric( discreteDatasetTitanic,continuousDatasetTitanic,
-      "domain",
-      "schema",
-      "ingestionTime",
-      "stageState",savePathData: Path)
+   // val resultatSaveTitanic : DataFrame = unionDisContMetric( discreteDataset,continuousDataset,savePathData: Path)
     val durationA02= (System.nanoTime - timeA02) / 1e9d
     println("Time to make the union and to save : " + durationA02)
-    resultatSaveTitanic.show()
+   // discreteDataset.show()
 
 
   }

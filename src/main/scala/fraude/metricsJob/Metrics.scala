@@ -182,7 +182,7 @@ object Metrics extends StrictLogging {
 
   def regroupContinuousMetricsByVariable(nameCol: String, metricFrame: DataFrame): DataFrame = {
     //Get the whole list of headers that contains the column name
-    val listColumns = metricFrame.columns.filter(_.contains(nameCol)).sorted
+    val listColumns: Array[String] = metricFrame.columns.filter(_.contains("("+nameCol+")")).sorted
     //Select only columns in listColumns
     val selectedListColumns: DataFrame = metricFrame.select(listColumns.head, listColumns.tail: _*)
     //Reduce decimal values to 3
@@ -195,7 +195,12 @@ object Metrics extends StrictLogging {
     val removeNameColumnMetric = addVariablesColumn.columns.toList
       .map(str => str.replaceAll("\\(" + nameCol + "\\)", ""))
       .map(_.capitalize)
+
+    addVariablesColumn.show(4)
+
     addVariablesColumn.toDF(removeNameColumnMetric: _*)
+
+
   }
 
   /** Function to compute the DataFrame metrics by row
@@ -216,7 +221,7 @@ object Metrics extends StrictLogging {
     val listDifference = attributes.filterNot(headerDataUse.contains)
 
     val attributeChecked = intersectionHeaderAttributes.nonEmpty match {
-      case true => attributes
+      case true => intersectionHeaderAttributes
       case false =>
         logger.error(
           "These attributes are not part of the variable names: " + listDifference.mkString(",")
@@ -434,7 +439,7 @@ case class DiscreteMetric(name: String, function: ((Column, DataFrame)) => Colum
     val listDifference = attributes.filterNot(headerDataUse.contains)
 
     val attributeChecked = intersectionHeaderAttributes.nonEmpty match {
-      case true => attributes
+      case true => intersectionHeaderAttributes
       case false =>
         logger.error(
           "These attributes are not part of the variable names: " + listDifference.mkString(",")

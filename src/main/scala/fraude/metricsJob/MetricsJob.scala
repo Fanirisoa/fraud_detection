@@ -143,20 +143,13 @@ object MetricsJob extends SparkJob {
     *
     * @param discreteDataset : dataframe that contains all the discrete metrics
     * @param continuousDataset : dataframe that contains all the continuous metrics
-    * @param domain    : name of the domain
-    * @param schema    : schema of the initial data
-    * @param ingestionTime : time which correspond to the ingestion
-    * @param stageState   : stage (unit / global)
     * @param savePathData  path where metrics are stored
     * @return
     */
 
   def unionDisContMetric( discreteDataset : DataFrame,
                           continuousDataset : DataFrame,
-                          domain: String,
-                          schema: String,
-                          ingestionTime: String,
-                          stageState:String, savePathData: Path) : DataFrame= {
+                          savePathData: Path) : DataFrame= {
 
   val listDiscAttrName: List[String] = List("min", "max", "mean", "count", "variance", "standardDev", "sum", "skewness", "kurtosis", "percentile25", "median", "percentile75", "missingValues")
   val listContAttrName: List[String] = List("category", "countDistinct","countByCategory", "frequencies", "missingValuesDiscrete")
@@ -168,11 +161,7 @@ object MetricsJob extends SparkJob {
 
   val coupleDataMetrics = List((discreteDataset,listDiscAttrName),(continuousDataset,listContAttrName))
 
-  val resultMetaDataFrame: DataFrame = coupleDataMetrics.map(tupleDataMetric => generateFullMetric(tupleDataMetric._1, tupleDataMetric._2, neededColList)).reduce(_ union _)
-    .withColumn(domain, lit(domain))
-    .withColumn(schema, lit(schema))
-    .withColumn(ingestionTime, lit(ingestionTime))
-    .withColumn(stageState, lit(stageState)).select(sortSelectCol.head, sortSelectCol.tail: _*)
+  val resultMetaDataFrame: DataFrame = coupleDataMetrics.map(tupleDataMetric => generateFullMetric(tupleDataMetric._1, tupleDataMetric._2, neededColList)).reduce(_ union _).select(sortSelectCol.head, sortSelectCol.tail: _*)
 
     if (exists(savePathData))
       delete(savePathData)
