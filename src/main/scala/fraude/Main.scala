@@ -23,11 +23,11 @@ package fraude
 import com.typesafe.scalalogging.StrictLogging
 import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
-import fraude.metricsJob.MetricsJob._
+import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.Metrics
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.{Column, DataFrame}
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 
 object Main extends SparkJob with StrictLogging{
@@ -46,7 +46,7 @@ object Main extends SparkJob with StrictLogging{
       result
     }
 
-
+    /*
     println("----------------------------")
     println("   Load the dataset.csv    :")
     println("----------------------------")
@@ -98,8 +98,59 @@ object Main extends SparkJob with StrictLogging{
     resultatSaveTitanic.show()
 
 
+*/
 
 
+    def run(): SparkSession = {
+      sparkSession
+    }
+
+    import sparkSession.sqlContext.implicits._
+
+
+
+    val person = Seq(
+      (0, "Bill Chambers", 0, Seq(100)),
+      (1, "Matei Zaharia", 1, Seq(500,250,100)),
+      (2, "Michael Armbrust", 1, Seq(250,100))).toDF("id", "name","graduate_program","spark_status")
+
+    person.show()
+
+    val graduateProgram = Seq(
+      (0, "Masters", "School of information", "UC Berkeley"),
+      (1, "Masters", "EECS", "UC Berkeley"),
+      (2, "PHD", "EECS", "UC Berkeley")).toDF("id", "degree","departement","school")
+
+    graduateProgram.show()
+    val sparkStatus = Seq(
+      (500, "Vice President"),
+      (250, "PMC Member"),
+      (100, "Contributor")).toDF("id", "status")
+    sparkStatus.show()
+
+    person.createOrReplaceTempView("person")
+    graduateProgram.createOrReplaceTempView("graduateProgram")
+    sparkStatus.createOrReplaceTempView("sparkStatus")
+
+    val joinExpression: Column = person.col("graduate_program") === graduateProgram.col("id")
+
+
+    person.join(graduateProgram,joinExpression).show()
+
+
+    person.join(graduateProgram,joinExpression,"outer").show()
+
+    graduateProgram.join(person, joinExpression, "left_outer").show()
+
+    person.join(graduateProgram, joinExpression, "right_outer").show()
+
+    graduateProgram.join(person, joinExpression, "left_semi").show()
+
+    graduateProgram.join(person, joinExpression, "left_anti").show()
+
+    graduateProgram.join(person, joinExpression, "cross").show()
+
+    person.crossJoin(graduateProgram).show()
   }
 
 }
