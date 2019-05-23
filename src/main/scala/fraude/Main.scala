@@ -27,7 +27,7 @@ import fraude.metricsJob.MetricsJob._
 import fraude.metricsJob.Metrics
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{Column, DataFrame}
 
 
 object Main extends SparkJob with StrictLogging{
@@ -96,6 +96,8 @@ object Main extends SparkJob with StrictLogging{
     val durationA02= (System.nanoTime - timeA02) / 1e9d
     println("Time to make the union and to save : " + durationA02)
     resultatSaveTitanic.show()
+
+    
 
 
   }
