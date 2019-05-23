@@ -97,7 +97,7 @@ object Main extends SparkJob with StrictLogging{
     println("Time to make the union and to save : " + durationA02)
     resultatSaveTitanic.show()
 
-    
+
 
 
   }
