@@ -27,6 +27,7 @@ import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.Metrics
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 
@@ -108,7 +109,7 @@ object Main extends SparkJob with StrictLogging{
     import sparkSession.sqlContext.implicits._
 
 
-
+   /*
     val person = Seq(
       (0, "Bill Chambers", 0, Seq(100)),
       (1, "Matei Zaharia", 1, Seq(500,250,100)),
@@ -151,6 +152,37 @@ object Main extends SparkJob with StrictLogging{
     graduateProgram.join(person, joinExpression, "cross").show()
 
     person.crossJoin(graduateProgram).show()
+
+    */
+
+    val mycollection: Array[String] = "Spark the definitive Guide : BIg Data processing Made Simple"
+      .split(" ")
+
+    val words : RDD[String] = sparkSession.sparkContext.parallelize(mycollection,2)
+
+    words.toDF.show()
+
+    words.map(word => (word.toLowerCase, 1))
+
+     val keyword: RDD[(String, String)] = words.keyBy(word => word.toLowerCase.toSeq(0).toString)
+
+    keyword.toDF.show()
+
+
+    println(keyword.lookup("s"))
+
+    val chars: RDD[Char] = words.flatMap(word => word.toLowerCase.toSeq)
+    val KVvharacters = chars.map(letter => (letter, 1))
+    def maxFunc(left : Int, rigth : Int): Int = math.max(left, rigth)
+    def addFunc(left : Int, rigth : Int): Int = left + rigth
+    val nums: RDD[Int] = sparkSession.sparkContext.parallelize(1 to 30, 5)
+
+    println(KVvharacters.countByKey())
+
+
+     println(" the result: " + nums.aggregate(0)(maxFunc,addFunc))
+
+
   }
 
 }
