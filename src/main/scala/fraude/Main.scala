@@ -27,6 +27,7 @@ import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.Metrics
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
@@ -155,6 +156,8 @@ object Main extends SparkJob with StrictLogging{
 
     */
 
+
+    /*
     val mycollection: Array[String] = "Spark the definitive Guide : BIg Data processing Made Simple"
       .split(" ")
 
@@ -180,7 +183,33 @@ object Main extends SparkJob with StrictLogging{
     println(KVvharacters.countByKey())
 
 
-     println(" the result: " + nums.aggregate(0)(maxFunc,addFunc))
+    println(" the result: " + nums.aggregate(0)(maxFunc,addFunc))
+
+
+    val numRange = sparkSession.sparkContext.parallelize(0 to 9, 2)
+    words.zip(numRange).collect()
+
+
+    */
+
+
+    val myCollection: Array[String] = " Spark The definitve Guide : Big Data Processing Mase Simple".split(" ")
+    println(myCollection)
+    val words = sparkSession.sparkContext.parallelize(myCollection,2)
+
+
+    val supplementalData = Map("Spark" -> 1000,"Definitive" -> 200, "Big" -> -300, "Simple" -> 100)
+    val suppBroadcast: Broadcast[Map[String, Int]] = sparkSession.sparkContext.broadcast( supplementalData )
+
+    suppBroadcast.value
+
+
+
+    case class Flight(DEST_COUNTRY_NAME :String, ORGIGIN_COUNTRY_NAME: String, count: BigInt)
+    
+    val flights = sparkSession.rea
+
+
 
 
   }
