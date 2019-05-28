@@ -205,9 +205,6 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-    case class Flight(DEST_COUNTRY_NAME :String, ORGIGIN_COUNTRY_NAME: String, count: BigInt)
-    
-    val flights = sparkSession.rea
 
 
 
