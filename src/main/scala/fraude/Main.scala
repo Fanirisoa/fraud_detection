@@ -192,7 +192,7 @@ object Main extends SparkJob with StrictLogging{
 
     */
 
-
+/*
     val myCollection: Array[String] = " Spark The definitve Guide : Big Data Processing Mase Simple".split(" ")
     println(myCollection)
     val words = sparkSession.sparkContext.parallelize(myCollection,2)
@@ -205,7 +205,7 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-
+*/
 
 
 
