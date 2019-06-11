@@ -25,6 +25,7 @@ import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
 import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.Metrics
+import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
@@ -62,6 +63,7 @@ object Main extends SparkJob with StrictLogging{
 
     val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
+    val allAttributesList :List[String] =     Seq("Class","V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
 
 
     println("--------------------")
@@ -91,11 +93,17 @@ object Main extends SparkJob with StrictLogging{
 
 
     val timeA02= System.nanoTime
-    val resultatSave : DataFrame = unionDisContMetric( discreteDataset,continuousDataset,savePathData: Path)
+    val resultatSave : DataFrame = unionDisContMetric(discreteDataset,continuousDataset,savePathData: Path)
     val durationA02= (System.nanoTime - timeA02) / 1e9d
     println("Time to make the union and to save : " + durationA02)
     resultatSave.show()
 
+
+    val timeA03= System.nanoTime
+    val correlationMatrix: DataFrame = Correlation.computeCorrelationMatrix(dataUse, allAttributesList)
+    val durationA03= (System.nanoTime - timeA03) / 1e9d
+    println("Time to compute the correlation matrix: " + durationA03)
+    correlationMatrix.show()
 
 
 
