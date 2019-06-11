@@ -48,7 +48,7 @@ object Main extends SparkJob with StrictLogging{
       result
     }
 
-    /*
+
     println("----------------------------")
     println("   Load the dataset.csv    :")
     println("----------------------------")
@@ -99,113 +99,6 @@ object Main extends SparkJob with StrictLogging{
     println("Time to make the union and to save : " + durationA02)
     resultatSaveTitanic.show()
 
-
-*/
-
-
-    def run(): SparkSession = {
-      sparkSession
-    }
-
-    import sparkSession.sqlContext.implicits._
-
-
-   /*
-    val person = Seq(
-      (0, "Bill Chambers", 0, Seq(100)),
-      (1, "Matei Zaharia", 1, Seq(500,250,100)),
-      (2, "Michael Armbrust", 1, Seq(250,100))).toDF("id", "name","graduate_program","spark_status")
-
-    person.show()
-
-    val graduateProgram = Seq(
-      (0, "Masters", "School of information", "UC Berkeley"),
-      (1, "Masters", "EECS", "UC Berkeley"),
-      (2, "PHD", "EECS", "UC Berkeley")).toDF("id", "degree","departement","school")
-
-    graduateProgram.show()
-    val sparkStatus = Seq(
-      (500, "Vice President"),
-      (250, "PMC Member"),
-      (100, "Contributor")).toDF("id", "status")
-    sparkStatus.show()
-
-    person.createOrReplaceTempView("person")
-    graduateProgram.createOrReplaceTempView("graduateProgram")
-    sparkStatus.createOrReplaceTempView("sparkStatus")
-
-    val joinExpression: Column = person.col("graduate_program") === graduateProgram.col("id")
-
-
-    person.join(graduateProgram,joinExpression).show()
-
-
-    person.join(graduateProgram,joinExpression,"outer").show()
-
-    graduateProgram.join(person, joinExpression, "left_outer").show()
-
-    person.join(graduateProgram, joinExpression, "right_outer").show()
-
-    graduateProgram.join(person, joinExpression, "left_semi").show()
-
-    graduateProgram.join(person, joinExpression, "left_anti").show()
-
-    graduateProgram.join(person, joinExpression, "cross").show()
-
-    person.crossJoin(graduateProgram).show()
-
-    */
-
-
-    /*
-    val mycollection: Array[String] = "Spark the definitive Guide : BIg Data processing Made Simple"
-      .split(" ")
-
-    val words : RDD[String] = sparkSession.sparkContext.parallelize(mycollection,2)
-
-    words.toDF.show()
-
-    words.map(word => (word.toLowerCase, 1))
-
-     val keyword: RDD[(String, String)] = words.keyBy(word => word.toLowerCase.toSeq(0).toString)
-
-    keyword.toDF.show()
-
-
-    println(keyword.lookup("s"))
-
-    val chars: RDD[Char] = words.flatMap(word => word.toLowerCase.toSeq)
-    val KVvharacters = chars.map(letter => (letter, 1))
-    def maxFunc(left : Int, rigth : Int): Int = math.max(left, rigth)
-    def addFunc(left : Int, rigth : Int): Int = left + rigth
-    val nums: RDD[Int] = sparkSession.sparkContext.parallelize(1 to 30, 5)
-
-    println(KVvharacters.countByKey())
-
-
-    println(" the result: " + nums.aggregate(0)(maxFunc,addFunc))
-
-
-    val numRange = sparkSession.sparkContext.parallelize(0 to 9, 2)
-    words.zip(numRange).collect()
-
-
-    */
-
-/*
-    val myCollection: Array[String] = " Spark The definitve Guide : Big Data Processing Mase Simple".split(" ")
-    println(myCollection)
-    val words = sparkSession.sparkContext.parallelize(myCollection,2)
-
-
-    val supplementalData = Map("Spark" -> 1000,"Definitive" -> 200, "Big" -> -300, "Simple" -> 100)
-    val suppBroadcast: Broadcast[Map[String, Int]] = sparkSession.sparkContext.broadcast( supplementalData )
-
-    suppBroadcast.value
-
-
-
-*/
 
 
 
