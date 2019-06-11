@@ -101,9 +101,9 @@ object Main extends SparkJob with StrictLogging{
 
     val timeA03= System.nanoTime
     val correlationMatrix: DataFrame = Correlation.computeCorrelationMatrix(dataUse, allAttributesList)
-    val durationA03= (System.nanoTime - timeA03) / 1e9d
+    val durationA03= (System.nanoTime - timeA03) / 5e9d
     println("Time to compute the correlation matrix: " + durationA03)
-    correlationMatrix.show()
+    correlationMatrix.show(50)
 
 
 
