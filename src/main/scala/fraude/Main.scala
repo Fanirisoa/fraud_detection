@@ -71,15 +71,15 @@ object Main extends SparkJob with StrictLogging{
     println("--------------------")
     val totalDiscreteMetrics: List[Metrics.DiscreteMetric] = List(Metrics.Category, Metrics.CountDistinct, Metrics.CountDiscrete, Metrics.Frequencies,Metrics.CountMissValuesDiscrete)
     val totalContMetric : List[Metrics.ContinuousMetric]=  List(Metrics.Min, Metrics.Max, Metrics.Mean, Metrics.Count, Metrics.Variance, Metrics.Stddev, Metrics.Sum, Metrics.Skewness, Metrics.Kurtosis, Metrics.Percentile25, Metrics.Median, Metrics.Percentile75, Metrics.CountMissValues)
-
-
+    val dataUse: DataFrame = inputDataFrame
+    /*
     val discreteOps: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
     val continuousOps:  List[Metrics.ContinuousMetric] = totalContMetric
 
 
     val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "MetricResult/")
 
-    val dataUse: DataFrame = inputDataFrame
+
 
     val continAttrs: List[String] = listContnuousAttributes
     val discAttrs: List[String] = listDiscreteAttributes
@@ -98,6 +98,10 @@ object Main extends SparkJob with StrictLogging{
     println("Time to make the union and to save : " + durationA02)
     resultatSave.show()
 
+    */
+    println("-------------------------------")
+    println("  Compute Correlation Matrix  :")
+    println("-------------------------------")
 
     val timeA03= System.nanoTime
     val correlationMatrix: DataFrame = Correlation.computeCorrelationMatrix(dataUse, allAttributesList)
