@@ -7,7 +7,7 @@ import org.apache.spark.sql.{Column, DataFrame}
 
 object Correlation extends StrictLogging {
 
-  def regroupCorrelationByVariable(nameCol: String, metricFrame: DataFrame): DataFrame = {
+  def regroupCorrelationByVariable(nameCol: String, metricFrame: DataFrame, colRenamed: List[String] ): DataFrame = {
     //Get the whole list of headers that contains the column name
     val listColumns: Array[String] = metricFrame.columns.filter(_.contains("corr("+nameCol+",")).sorted
     //Select only columns in listColumns
@@ -19,13 +19,18 @@ object Correlation extends StrictLogging {
     //Add column Variables that contains the nameCol
     val addVariablesColumn: DataFrame = broundColumns.withColumn("variableName", lit(nameCol))
 
+
     //Remove nameCol to keep only the metric name foreach metric.
     val removeNameColumnMetric = addVariablesColumn.columns.toList
       .map(str => str.replaceAll("corr"+"\\(" + nameCol + "\\,", ""))
       .map(str => str.replaceAll( "\\)", ""))
       .map(_.capitalize)
 
-    addVariablesColumn.toDF(removeNameColumnMetric: _*)
+    val resultADD = addVariablesColumn.toDF(removeNameColumnMetric: _*)
+
+    resultADD.show
+
+    resultADD
 
   }
 
@@ -49,22 +54,20 @@ object Correlation extends StrictLogging {
 
 
 
-    val colRenamed: List[String] = "variableName" :: intersectionHeaderAttributes
+    val colRenamed: List[String] = "variableName" :: attributeChecked
+    println(colRenamed)
 
     val metrics: List[Column] = attributeChecked.flatMap(nameCol1 => attributeChecked.map(nameCol2 => corr(nameCol1,nameCol2)))
-
-    dataInit.agg(metrics.head, metrics.tail: _*)
-
 
     val metricFrame: DataFrame = dataInit.agg(metrics.head, metrics.tail: _*)
 
     val matrixMetric: DataFrame  =
       attributeChecked
-        .map(x => regroupCorrelationByVariable(x, metricFrame))
+        .map(x => regroupCorrelationByVariable(x, metricFrame,colRenamed))
         .reduce(_.union(_))
 
     matrixMetric
-      .select(colRenamed.head, colRenamed.tail: _*)
+
 
   }
 
