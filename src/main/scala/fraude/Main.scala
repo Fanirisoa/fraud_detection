@@ -63,7 +63,7 @@ object Main extends SparkJob with StrictLogging{
 
     val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
-    val allAttributesList :List[String] =     Seq("Class","V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
+    val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
 
 
     println("--------------------")
@@ -72,6 +72,7 @@ object Main extends SparkJob with StrictLogging{
     val totalDiscreteMetrics: List[Metrics.DiscreteMetric] = List(Metrics.Category, Metrics.CountDistinct, Metrics.CountDiscrete, Metrics.Frequencies,Metrics.CountMissValuesDiscrete)
     val totalContMetric : List[Metrics.ContinuousMetric]=  List(Metrics.Min, Metrics.Max, Metrics.Mean, Metrics.Count, Metrics.Variance, Metrics.Stddev, Metrics.Sum, Metrics.Skewness, Metrics.Kurtosis, Metrics.Percentile25, Metrics.Median, Metrics.Percentile75, Metrics.CountMissValues)
     val dataUse: DataFrame = inputDataFrame
+
     /*
     val discreteOps: List[Metrics.DiscreteMetric] = totalDiscreteMetrics
     val continuousOps:  List[Metrics.ContinuousMetric] = totalContMetric
