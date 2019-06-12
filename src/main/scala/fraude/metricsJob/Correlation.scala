@@ -22,7 +22,7 @@ object Correlation extends StrictLogging {
 
     //Remove nameCol to keep only the metric name foreach metric.
     val removeNameColumnMetric = addVariablesColumn.columns.toList
-      .map(str => str.replaceAll("corr"+"\\(" + nameCol + "\\,", ""))
+      .map(str => str.replaceAll("corr"+"\\(" + nameCol + "\\, ", ""))
       .map(str => str.replaceAll( "\\)", ""))
       .map(_.capitalize)
 
@@ -64,6 +64,7 @@ object Correlation extends StrictLogging {
     matrixMetric.show()
 
     matrixMetric.select(colRenamed.head, colRenamed.tail: _*)
+
 
 
   }
