@@ -17,17 +17,17 @@ object Correlation extends StrictLogging {
       selectedListColumns.columns.map(c => bround(col(c), 3).alias(c)): _*
     )
     //Add column Variables that contains the nameCol
-    val addVariablesColumn: DataFrame = broundColumns.withColumn("variableName", lit(nameCol+"_"))
+    val addVariablesColumn: DataFrame = broundColumns.withColumn("variableName", lit(nameCol))
 
 
     //Remove nameCol to keep only the metric name foreach metric.
     val removeNameColumnMetric = addVariablesColumn.columns.toList
       .map(str => str.replaceAll("corr"+"\\(" + nameCol + "\\,", ""))
-      .map(str => str.replaceAll( "\\)", "_"))
+      .map(str => str.replaceAll( "\\)", ""))
       .map(_.capitalize)
 
       addVariablesColumn.toDF(removeNameColumnMetric: _*)
-    
+
   }
 
 
@@ -49,7 +49,7 @@ object Correlation extends StrictLogging {
     }
 
 
-    val colRenamed: List[String] = "variableName" :: attributeChecked.map(str => str.replaceAll(str,str+"_"))
+    val colRenamed: List[String] = "variableName" :: attributeChecked
     println(colRenamed)
 
     val metrics: List[Column] = attributeChecked.flatMap(nameCol1 => attributeChecked.map(nameCol2 => corr(nameCol1,nameCol2)))
@@ -63,7 +63,7 @@ object Correlation extends StrictLogging {
 
     matrixMetric.show()
 
-    matrixMetric.selectExpr(colRenamed:_*)
+    matrixMetric.select(colRenamed.head, colRenamed.tail: _*)
 
 
   }
