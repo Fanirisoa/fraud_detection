@@ -7,7 +7,7 @@ import org.apache.spark.sql.{Column, DataFrame}
 
 object Correlation extends StrictLogging {
 
-  def regroupCorrelationByVariable(nameCol: String, metricFrame: DataFrame, colRenamed: List[String] ): DataFrame = {
+  def regroupCorrelationByVariable(nameCol: String, metricFrame: DataFrame ): DataFrame = {
     //Get the whole list of headers that contains the column name
     val listColumns: Array[String] = metricFrame.columns.filter(_.contains("corr("+nameCol+",")).sorted
     //Select only columns in listColumns
@@ -17,13 +17,13 @@ object Correlation extends StrictLogging {
       selectedListColumns.columns.map(c => bround(col(c), 3).alias(c)): _*
     )
     //Add column Variables that contains the nameCol
-    val addVariablesColumn: DataFrame = broundColumns.withColumn("variableName", lit(nameCol))
+    val addVariablesColumn: DataFrame = broundColumns.withColumn("variableName", lit(nameCol+"."))
 
 
     //Remove nameCol to keep only the metric name foreach metric.
     val removeNameColumnMetric = addVariablesColumn.columns.toList
       .map(str => str.replaceAll("corr"+"\\(" + nameCol + "\\,", ""))
-      .map(str => str.replaceAll( "\\)", ""))
+      .map(str => str.replaceAll( "\\)", "."))
       .map(_.capitalize)
 
     val resultADD = addVariablesColumn.toDF(removeNameColumnMetric: _*)
@@ -53,8 +53,7 @@ object Correlation extends StrictLogging {
     }
 
 
-
-    val colRenamed: List[String] = "variableName" :: attributeChecked
+    val colRenamed: List[String] = "variableName" :: attributeChecked.map(str => str.replaceAll(str, str+"."))
     println(colRenamed)
 
     val metrics: List[Column] = attributeChecked.flatMap(nameCol1 => attributeChecked.map(nameCol2 => corr(nameCol1,nameCol2)))
@@ -63,10 +62,12 @@ object Correlation extends StrictLogging {
 
     val matrixMetric: DataFrame  =
       attributeChecked
-        .map(x => regroupCorrelationByVariable(x, metricFrame,colRenamed))
+        .map(x => regroupCorrelationByVariable(x, metricFrame))
         .reduce(_.union(_))
 
-    matrixMetric
+    matrixMetric.show()
+
+    matrixMetric.select(colRenamed.head, colRenamed.tail: _*)
 
 
   }
