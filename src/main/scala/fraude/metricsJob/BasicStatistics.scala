@@ -4,9 +4,9 @@ import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame}
 
-object Metrics extends StrictLogging {
+object BasicStatistics extends StrictLogging {
 
-  /** Case class ContinuousMetric with all corresponding Metrics
+  /** Case class ContinuousMetric with all corresponding BasicStatistics
     *
     * @param name     : the name of the variable
     * @param function : the metric function
