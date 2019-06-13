@@ -11,26 +11,28 @@ import org.apache.spark.sql.functions._
 object smoteClass extends StrictLogging {
 
   def featureAssembler(dataFinal: DataFrame,
-                       colList: List[String]
+                       colList: List[String],
+                       colLabel : String
                     ): DataFrame= {
     val assembler = new VectorAssembler()
       .setInputCols(colList.toArray)
       .setOutputCol("feature")
 
+    val colFinal : List[String]= List(colLabel,"feature")
+
     assembler.transform(dataFinal)
+      .select(colFinal.head, colFinal.tail: _*)
   }
-
-
-
 
 
   def KNNCalculation(
                       dataFinal: DataFrame,
                       feature:String,
+                      label: String,
                       reqrows:Int,
                       BucketLength:Int,
                       NumHashTables:Int): DataFrame= {
-    val b1: DataFrame = dataFinal.withColumn("index", row_number().over(Window.partitionBy("label").orderBy("label")))
+    val b1: DataFrame = dataFinal.withColumn("index", row_number().over(Window.partitionBy(label).orderBy(label)))
     val brp: BucketedRandomProjectionLSH = new BucketedRandomProjectionLSH().setBucketLength(BucketLength).setNumHashTables(NumHashTables).setInputCol(feature).setOutputCol("values")
     val model = brp.fit(b1)
 
@@ -43,7 +45,6 @@ object smoteClass extends StrictLogging {
       "datasetB.index as id2",
       "datasetB.feature as k2",
       "distCol").filter("distCol>0.0").orderBy("id1", "distCol").dropDuplicates().limit(reqrows)
-
   }
 
 

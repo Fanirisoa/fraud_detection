@@ -116,22 +116,21 @@ object Main extends SparkJob with StrictLogging{
     correlationMatrix.show(50)
 
     */
-    val dataset = sparkSession.createDataFrame(
-      Seq((0, 1.2, 1.3), (1, 2.2, 2.3), (2, 3.2, 3.3))
-    ).toDF("id", "val1", "val2")
 
-    val output = featureAssembler(dataset,List("val1", "val2"))
-    output.show()
 
-    dataset.printSchema()
-    dataUse.printSchema()
 
-   /*
     val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
-    val dataAssembler: DataFrame =  featureAssembler(dataUse,allAssembly)
-    dataUse.show()
-    dataAssembler.show()
-  */
+    val dataAssembly: DataFrame =  featureAssembler(dataUse,allAssembly,"Class")
+
+
+    val dataKNN: DataFrame =  KNNCalculation(dataAssembly,
+                        "feature",
+                        "Class",
+                        3,
+                        2,
+                        3)
+    dataKNN.show()
+
   }
 
 }
