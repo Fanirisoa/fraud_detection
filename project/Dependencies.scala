@@ -35,9 +35,10 @@ object Dependencies {
   
   
   val spark = Seq(
-    "org.apache.spark" %% "spark-core" % Versions.spark, // %"provided",
-    "org.apache.spark" %% "spark-sql" % Versions.spark, // %"provided",
-    "org.apache.spark" %% "spark-hive" % Versions.spark,// %"provided",
+    "org.apache.spark" %% "spark-core"  % Versions.spark, // %"provided",
+    "org.apache.spark" %% "spark-sql"   % Versions.spark, // %"provided",
+    "org.apache.spark" %% "spark-hive"  % Versions.spark,// %"provided",
+    "org.apache.spark" %% "spark-mllib" % Versions.spark
   )
 
   val dependencies = spark ++ scalaTest ++ logging ++ typedConfigs

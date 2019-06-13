@@ -4,7 +4,7 @@
 		module="fraud_detection_2.12"
 		revision="0.1"
 		status="integration"
-		publication="20190522134957"
+		publication="20190613102127"
 	>
 		<description>
 		fraud_detection
@@ -35,6 +35,7 @@
 		<dependency org="org.apache.spark" name="spark-core_2.12" rev="2.4.1" conf="compile->default(compile)"/>
 		<dependency org="org.apache.spark" name="spark-sql_2.12" rev="2.4.1" conf="compile->default(compile)"/>
 		<dependency org="org.apache.spark" name="spark-hive_2.12" rev="2.4.1" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-mllib_2.12" rev="2.4.1" conf="compile->default(compile)"/>
 		<dependency org="org.scalatest" name="scalatest_2.12" rev="3.0.5" conf="compile->default(compile);test->default(compile)"/>
 		<dependency org="com.typesafe.scala-logging" name="scala-logging_2.12" rev="3.9.0" conf="compile->default(compile)"/>
 		<dependency org="com.github.kxbmap" name="configs_2.12" rev="0.4.4" conf="compile->default(compile)"/>

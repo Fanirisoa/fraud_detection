@@ -61,8 +61,6 @@ object Correlation extends StrictLogging {
         .map(x => regroupCorrelationByVariable(x, metricFrame))
         .reduce(_.union(_))
 
-    matrixMetric.show()
-
     matrixMetric.select(colRenamed.head, colRenamed.tail: _*)
 
 
