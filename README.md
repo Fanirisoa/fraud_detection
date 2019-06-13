@@ -56,12 +56,11 @@ If I want to use HDFS path as initial path, I use the following environment :
 - [Fraud Detection with SMOTE and XGBoost in R](https://www.kaggle.com/bonovandoo/fraud-detection-with-smote-and-xgboost-in-r).
 - [Predicting Fraud in Financial Payment Services](https://www.kaggle.com/arjunjoshua/predicting-fraud-in-financial-payment-services).
 - [Financial Fraud Detection-XGBoost](https://www.kaggle.com/georgepothur/4-financial-fraud-detection-xgboost).
-
 - [TalkingData AdTracking Fraud Detection Challenge](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection/discussion/56777#latest-329919).
-
-
-
 - [Reinforcement Learning with Python](https://towardsdatascience.com/reinforcement-learning-with-python-8ef0242a2fa2).
+
+
+- [new BucketedRandomProjectionLSH()](https://spark.apache.org/docs/latest/ml-features.html#bucketed-random-projection-for-euclidean-distance).
 
 
 
