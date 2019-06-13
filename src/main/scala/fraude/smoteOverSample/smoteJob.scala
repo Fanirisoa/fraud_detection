@@ -51,32 +51,46 @@ object smoteClass extends StrictLogging {
 
 
   def smoteCalc(key1: org.apache.spark.ml.linalg.Vector, key2: org.apache.spark.ml.linalg.Vector): Array[linalg.Vector] ={
-    val resArray = Array(key1, key2)
-    val res = key1.toArray.zip(key2.toArray.zip(key1.toArray).map(x => x._1 - x._2).map(_*0.2)).map(x => x._1 + x._2)
-    resArray :+ org.apache.spark.ml.linalg.Vectors.dense(res)}
+    val resArray: Array[linalg.Vector] = Array(key1, key2)
 
-/*
+    val resZip: Array[(Double, Double)] = key2.toArray.zip(key1.toArray)
+
+    val res: Array[Double] = key1.toArray.zip(resZip.map(x => x._1 - x._2).map(_*0.2)).map(x => x._1 + x._2)
+    resArray :+ org.apache.spark.ml.linalg.Vectors.dense(res)
+  }
+
+
   def Smote(
              inputFrame:org.apache.spark.sql.DataFrame,
-             feature:String,
+             featureList:List[String],
              label:String,
              percentOver:Int,
              BucketLength:Int,
-             NumHashTables:Int):org.apache.spark.sql.DataFrame = {
+             NumHashTables:Int): DataFrame = {
+
+    val dataAssembly: DataFrame =  featureAssembler(inputFrame,featureList,label)
     val groupedData = inputFrame.groupBy(label).count
+
+    println("OK 1")
+
     require(groupedData.count == 2, println("Only 2 labels allowed"))
     val classAll = groupedData.collect()
     val minorityclass = if (classAll(0)(1).toString.toInt > classAll(1)(1).toString.toInt) classAll(1)(0).toString else classAll(0)(0).toString
-    val frame = inputFrame.select(feature,label).where(label + " == " + minorityclass)
+
+    println("OK 2")
+
+    val frame = dataAssembly.select(col("feature"),col(label)).where(label + " == " + minorityclass)
     val rowCount = frame.count
     val reqrows = (rowCount * (percentOver/100)).toInt
     val md = udf(smoteCalc _)
-    val b1 = KNNCalculation(frame, feature,label, reqrows, BucketLength, NumHashTables)
+    val b1 = KNNCalculation(frame, "feature",label, reqrows, BucketLength, NumHashTables)
     val b2 = b1.withColumn("ndtata", md(col("k1"), col("k2"))).select("ndtata")
     val b3 = b2.withColumn("AllFeatures", explode(col("ndtata"))).select("AllFeatures").dropDuplicates
     val b4 = b3.withColumn(label, lit(minorityclass).cast(frame.schema(1).dataType))
-    return inputFrame.union(b4).dropDuplicates
+    println("OK 3")
+
+    dataAssembly.union(b4).dropDuplicates
   }
-*/
+
 
 }

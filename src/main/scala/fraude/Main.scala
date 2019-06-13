@@ -32,6 +32,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
 
 
 
@@ -136,8 +137,17 @@ object Main extends SparkJob with StrictLogging{
       2,
       3)
     val durationA04= (System.nanoTime - timeA04) / 5e9d
-    println("Time to compute the correlation matrix: " + durationA04)
+    println("Time to compute The KNN : " + durationA04)
     dataKNN.show()
+
+
+    val timeA05= System.nanoTime
+    val resSmote: DataFrame = Smote( dataReduice, allAssembly, "Class", 10, 3, 3)
+    val durationA05= (System.nanoTime - timeA05) / 5e9d
+    println("Time to compute the SmoteOversampling: " + durationA05)
+    resSmote.show()
+
+
 
   }
 
