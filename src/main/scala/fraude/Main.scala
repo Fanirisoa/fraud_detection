@@ -25,12 +25,15 @@ import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
 import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.BasicStatistics
+import fraude.smoteOverSample.smoteClass.{featureAssembler, _}
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+
+
 
 
 object Main extends SparkJob with StrictLogging{
@@ -59,7 +62,7 @@ object Main extends SparkJob with StrictLogging{
     val inputPathData: Path = new Path(Settings.sparktrain.inputPath ++ "fraud_detection" +"/"+ filename ++".csv")
 
     val inputDataFrame: DataFrame =  read(inputPathData)
-    inputDataFrame.show(20)
+   // inputDataFrame.show(20)
 
     val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
     val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
@@ -113,7 +116,22 @@ object Main extends SparkJob with StrictLogging{
     correlationMatrix.show(50)
 
     */
+    val dataset = sparkSession.createDataFrame(
+      Seq((0, 1.2, 1.3), (1, 2.2, 2.3), (2, 3.2, 3.3))
+    ).toDF("id", "val1", "val2")
 
+    val output = featureAssembler(dataset,List("val1", "val2"))
+    output.show()
+
+    dataset.printSchema()
+    dataUse.printSchema()
+
+   /*
+    val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
+    val dataAssembler: DataFrame =  featureAssembler(dataUse,allAssembly)
+    dataUse.show()
+    dataAssembler.show()
+  */
   }
 
 }

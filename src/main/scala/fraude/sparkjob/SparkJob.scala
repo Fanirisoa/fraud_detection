@@ -71,7 +71,7 @@ trait  SparkJob {
     * @return DataFrame corresponding to the read files.
     */
   def read(path: Path): DataFrame = {
-    sparkSession.read.option("header", "true").csv(path.toString)
+    sparkSession.read.option("header", "true").option("inferSchema",true).csv(path.toString)
   }
 
   /**
