@@ -67,18 +67,19 @@ object Main extends SparkJob with StrictLogging{
     val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
     val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
-
+    val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
 
+    /*
 
-    println("--------------------")
+    println("----------------------------")
     println("  Compute BasicStatistics  :")
-    println("--------------------")
+    println("----------------------------")
     val totalDiscreteMetrics: List[BasicStatistics.DiscreteMetric] = List(BasicStatistics.Category, BasicStatistics.CountDistinct, BasicStatistics.CountDiscrete, BasicStatistics.Frequencies,BasicStatistics.CountMissValuesDiscrete)
     val totalContMetric : List[BasicStatistics.ContinuousMetric]=  List(BasicStatistics.Min, BasicStatistics.Max, BasicStatistics.Mean, BasicStatistics.Count, BasicStatistics.Variance, BasicStatistics.Stddev, BasicStatistics.Sum, BasicStatistics.Skewness, BasicStatistics.Kurtosis, BasicStatistics.Percentile25, BasicStatistics.Median, BasicStatistics.Percentile75, BasicStatistics.CountMissValues)
-    val dataUse: DataFrame = inputDataFrame
 
-    /*
+
+
     val discreteOps: List[BasicStatistics.DiscreteMetric] = totalDiscreteMetrics
     val continuousOps:  List[BasicStatistics.ContinuousMetric] = totalContMetric
 
@@ -118,17 +119,24 @@ object Main extends SparkJob with StrictLogging{
     */
 
 
+    println("-------------------------------")
+    println("  Compute KNNcalculation :")
+    println("-------------------------------")
 
-    val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
-    val dataAssembly: DataFrame =  featureAssembler(dataUse,allAssembly,"Class")
+    val dataReduice: DataFrame = dataUse.limit(10000)
 
+    val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Time").toList
+    val dataAssembly: DataFrame =  featureAssembler(dataReduice,allAssembly,"Class")
 
+    val timeA04= System.nanoTime
     val dataKNN: DataFrame =  KNNCalculation(dataAssembly,
-                        "feature",
-                        "Class",
-                        3,
-                        2,
-                        3)
+      "feature",
+      "Class",
+      3,
+      2,
+      3)
+    val durationA04= (System.nanoTime - timeA04) / 5e9d
+    println("Time to compute the correlation matrix: " + durationA04)
     dataKNN.show()
 
   }
