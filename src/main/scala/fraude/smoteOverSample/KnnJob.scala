@@ -2,7 +2,7 @@ package fraude.smoteOverSample
 
 import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.ml.feature.VectorAssembler
-import org.apache.spark.ml.linalg.Vectors
+import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.ml.feature.BucketedRandomProjectionLSH
 import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
 import org.apache.spark.sql.{Column, DataFrame}
@@ -25,18 +25,20 @@ object KnnJob extends StrictLogging {
       .select(colFinal.head, colFinal.tail: _*)
   }
 
-/*
-  def featureDiAssembler(dataFinal: DataFrame,
+
+   def featureDiAssembler(dataFinal: DataFrame,
                          colList: List[String],
                         ): DataFrame= {
 
-    def convertVectorToArray: UserDefinedFunction = udf((features: Vector[Double]) => features.toArray)
+     val colLength: Int = colList.length
+
+    def convertVectorToArray: UserDefinedFunction = udf((features: Vector) => features.toArray)
 
     // Add a ArrayType Column
     val dfArr: DataFrame = dataFinal.withColumn("featuresArr" , convertVectorToArray(dataFinal("feature")))
 
 
-    dfArr.select(col("*") +: (0 until 3).map(i => column("featuresArr").getItem(i).as(s"col$i")): _*)
+    dfArr.select(col("*") +: (0 until colLength-1).map(i => column("featuresArr").getItem(i).as(colList(i))): _*)
 
     /*
     // Array of element names that need to be fetched
@@ -54,7 +56,7 @@ object KnnJob extends StrictLogging {
   }
 
 
- */
+
 
 
 

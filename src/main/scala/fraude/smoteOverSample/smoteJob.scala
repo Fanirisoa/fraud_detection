@@ -1,7 +1,7 @@
 package fraude.smoteOverSample
 
 import com.typesafe.scalalogging.StrictLogging
-import org.apache.spark.ml.linalg
+import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.sql.expressions.{UserDefinedFunction}
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.functions._
@@ -11,8 +11,8 @@ object smoteClass extends StrictLogging {
 
 
 
-  def smoteCalc(key1: org.apache.spark.ml.linalg.Vector, key2: org.apache.spark.ml.linalg.Vector): Array[linalg.Vector] ={
-    val resArray: Array[linalg.Vector] = Array(key1, key2)
+  def smoteCalc(key1: org.apache.spark.ml.linalg.Vector, key2: org.apache.spark.ml.linalg.Vector): Array[Vector] ={
+    val resArray: Array[Vector] = Array(key1, key2)
 
     val resZip: Array[(Double, Double)] = key2.toArray.zip(key1.toArray)
 
@@ -58,6 +58,18 @@ object smoteClass extends StrictLogging {
     // Filter and add new instances
     val b2: DataFrame = b1.withColumn("ndtata", md(col("k1"), col("k2"))).select("ndtata")
     val b3: Dataset[Row] = b2.withColumn("feature", explode(col("ndtata"))).select("feature").dropDuplicates
+
+    /*
+    b3.show()
+    b3.printSchema()
+
+    def convertVectorToArray: UserDefinedFunction = udf((features: Vector) => features.toArray)
+    val dfArr: DataFrame = b3.withColumn("featuresArr" , convertVectorToArray(b3("feature")))
+    dfArr.show()
+    dfArr.printSchema()
+
+     */
+
     val b4: DataFrame= b3.withColumn(label, lit(minorityclass).cast(frame.schema(1).dataType)).select("Class","feature")
 
     dataAssembly.union(b4).dropDuplicates
