@@ -4,8 +4,8 @@ import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.feature.BucketedRandomProjectionLSH
 import org.apache.spark.ml.linalg
-import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.functions._
 
 object smoteClass extends StrictLogging {
@@ -70,24 +70,51 @@ object smoteClass extends StrictLogging {
 
     val dataAssembly: DataFrame =  featureAssembler(inputFrame,featureList,label)
     val groupedData = inputFrame.groupBy(label).count
+    println(groupedData.count)
+
 
     println("OK 1")
 
     require(groupedData.count == 2, println("Only 2 labels allowed"))
-    val classAll = groupedData.collect()
-    val minorityclass = if (classAll(0)(1).toString.toInt > classAll(1)(1).toString.toInt) classAll(1)(0).toString else classAll(0)(0).toString
+    val classAll: Array[Row] = groupedData.collect()
+
+    classAll.foreach(println)
+
+
+    val minorityclass: String = if (classAll(0)(1).toString.toInt > classAll(1)(1).toString.toInt) classAll(1)(0).toString else classAll(0)(0).toString
+
+    println(minorityclass)
 
     println("OK 2")
 
-    val frame = dataAssembly.select(col("feature"),col(label)).where(label + " == " + minorityclass)
-    val rowCount = frame.count
-    val reqrows = (rowCount * (percentOver/100)).toInt
-    val md = udf(smoteCalc _)
-    val b1 = KNNCalculation(frame, "feature",label, reqrows, BucketLength, NumHashTables)
-    val b2 = b1.withColumn("ndtata", md(col("k1"), col("k2"))).select("ndtata")
-    val b3 = b2.withColumn("AllFeatures", explode(col("ndtata"))).select("AllFeatures").dropDuplicates
-    val b4 = b3.withColumn(label, lit(minorityclass).cast(frame.schema(1).dataType))
+    val frame: Dataset[Row] = dataAssembly.select(col("feature"),col(label)).where(label + " == " + minorityclass)
+
+    frame.show()
+
+
+    val rowCount: Long = frame.count
+    println(rowCount)
+
+    val reqrows: Int = (rowCount * (percentOver/100)).toInt
+    println(rowCount * (percentOver/100))
+    println(reqrows)
+
+
+    val md: UserDefinedFunction = udf(smoteCalc _)
+    val b1: DataFrame = KNNCalculation(frame, "feature",label, reqrows, BucketLength, NumHashTables)
+
+
+    val b2: DataFrame = b1.withColumn("ndtata", md(col("k1"), col("k2"))).select("ndtata")
+    val b3: Dataset[Row] = b2.withColumn("feature", explode(col("ndtata"))).select("feature").dropDuplicates
+    val b4: DataFrame= b3.withColumn(label, lit(minorityclass).cast(frame.schema(1).dataType)).select("Class","feature")
     println("OK 3")
+
+    b4.show(20)
+    dataAssembly.show(20)
+
+    b4.printSchema()
+    dataAssembly.printSchema()
+
 
     dataAssembly.union(b4).dropDuplicates
   }

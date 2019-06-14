@@ -142,7 +142,7 @@ object Main extends SparkJob with StrictLogging{
 
 
     val timeA05= System.nanoTime
-    val resSmote: DataFrame = Smote( dataReduice, allAssembly, "Class", 10, 3, 3)
+    val resSmote: DataFrame = Smote( dataReduice, allAssembly, "Class", 200, 3, 3)
     val durationA05= (System.nanoTime - timeA05) / 5e9d
     println("Time to compute the SmoteOversampling: " + durationA05)
     resSmote.show()
