@@ -2,9 +2,10 @@ package fraude.smoteOverSample
 
 import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.ml.feature.BucketedRandomProjectionLSH
-import org.apache.spark.sql.expressions.{ Window}
-import org.apache.spark.sql.{DataFrame}
+import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
+import org.apache.spark.sql.{Column, DataFrame}
 import org.apache.spark.sql.functions._
 
 
@@ -23,6 +24,38 @@ object KnnJob extends StrictLogging {
     assembler.transform(dataFinal)
       .select(colFinal.head, colFinal.tail: _*)
   }
+
+/*
+  def featureDiAssembler(dataFinal: DataFrame,
+                         colList: List[String],
+                        ): DataFrame= {
+
+    def convertVectorToArray: UserDefinedFunction = udf((features: Vector[Double]) => features.toArray)
+
+    // Add a ArrayType Column
+    val dfArr: DataFrame = dataFinal.withColumn("featuresArr" , convertVectorToArray(dataFinal("feature")))
+
+
+    dfArr.select(col("*") +: (0 until 3).map(i => column("featuresArr").getItem(i).as(s"col$i")): _*)
+
+    /*
+    // Array of element names that need to be fetched
+    // ArrayIndexOutOfBounds is not checked.
+    // sizeof `elements` should be equal to the number of entries in column `features`
+    val elements: Array[String] = colList.toArray
+
+    // Create a SQL-like expression using the array
+    val sqlExpr: Array[Column] = elements.zipWithIndex.map{ case (alias, idx) => col("featuresArr").getItem(idx).as(alias) }
+
+    // Extract Elements from dfArr
+    dfArr.select(sqlExpr : _*)
+    */
+
+  }
+
+
+ */
+
 
 
   def KNNCalculation(

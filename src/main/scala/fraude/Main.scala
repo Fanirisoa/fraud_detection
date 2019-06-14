@@ -32,6 +32,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -72,7 +73,7 @@ object Main extends SparkJob with StrictLogging{
     val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
 
-
+/*
 
     println("----------------------------")
     println("  Compute BasicStatistics  :")
@@ -118,7 +119,7 @@ object Main extends SparkJob with StrictLogging{
     println("Time to compute the correlation matrix: " + durationA03)
     correlationMatrix.show(50)
 
-
+*/
 
     println("-------------------------------")
     println("  Compute KNNcalculation :")
@@ -149,7 +150,20 @@ object Main extends SparkJob with StrictLogging{
 
 
 
+
+    def convertVectorToArray: UserDefinedFunction = udf((features: Vector[Double]) => features.toArray)
+
+    // Add a ArrayType Column
+    val dfArr: DataFrame = resSmote.withColumn("featuresArr" , convertVectorToArray(resSmote("feature")))
+    dfArr
+
+/*
+    val dataDiAssembly: DataFrame =  featureDiAssembler(resSmote,allAssembly)
+    dataDiAssembly.show()
+*/
+
   }
+
 
 }
 
