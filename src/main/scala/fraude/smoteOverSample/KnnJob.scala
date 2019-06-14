@@ -38,20 +38,7 @@ object KnnJob extends StrictLogging {
     val dfArr: DataFrame = dataFinal.withColumn("featuresArr" , convertVectorToArray(dataFinal("feature")))
 
 
-    dfArr.select(col("*") +: (0 until colLength-1).map(i => column("featuresArr").getItem(i).as(colList(i))): _*)
-
-    /*
-    // Array of element names that need to be fetched
-    // ArrayIndexOutOfBounds is not checked.
-    // sizeof `elements` should be equal to the number of entries in column `features`
-    val elements: Array[String] = colList.toArray
-
-    // Create a SQL-like expression using the array
-    val sqlExpr: Array[Column] = elements.zipWithIndex.map{ case (alias, idx) => col("featuresArr").getItem(idx).as(alias) }
-
-    // Extract Elements from dfArr
-    dfArr.select(sqlExpr : _*)
-    */
+    dfArr.select(col("*") +: (0 until colLength-1).map(i => column("featuresArr").getItem(i).as(colList(i))): _*).drop("featuresArr","feature")
 
   }
 
