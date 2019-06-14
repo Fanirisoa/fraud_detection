@@ -25,7 +25,8 @@ import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
 import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.BasicStatistics
-import fraude.smoteOverSample.smoteClass.{featureAssembler, _}
+import fraude.smoteOverSample.smoteClass._
+import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
@@ -71,7 +72,7 @@ object Main extends SparkJob with StrictLogging{
     val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
 
-    /*
+
 
     println("----------------------------")
     println("  Compute BasicStatistics  :")
@@ -117,7 +118,6 @@ object Main extends SparkJob with StrictLogging{
     println("Time to compute the correlation matrix: " + durationA03)
     correlationMatrix.show(50)
 
-    */
 
 
     println("-------------------------------")
