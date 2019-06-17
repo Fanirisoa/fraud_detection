@@ -70,8 +70,7 @@ If I want to use HDFS path as initial path, I use the following environment :
 -[Introduction to Boosted Trees](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
 -[Awesome XGBoost](https://github.com/dmlc/xgboost/tree/master/demo).
 -[Complete Guide to Parameter Tuning in XGBoost ](https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/).
-
-
+-[xgboost/demo/](https://github.com/dmlc/xgboost/tree/master/demo#tutorials).
 
 
 
