@@ -60,8 +60,14 @@ If I want to use HDFS path as initial path, I use the following environment :
 - [Reinforcement Learning with Python](https://towardsdatascience.com/reinforcement-learning-with-python-8ef0242a2fa2).
 
 
+- [Reinforcement Learning with Python](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
 - [new BucketedRandomProjectionLSH()](https://spark.apache.org/docs/latest/ml-features.html#bucketed-random-projection-for-euclidean-distance).
-
+- [sparkSubmitSmote.scala](https://github.com/Angkirat/Smote-for-Spark/blob/master/sparkSubmitSmote.scala).
+- [SMOTE.scala](https://github.com/anathan90/SparkSMOTE/blob/master/src/main/scala/SMOTE.scala).
+- [new BucketedRandomProjectionLSH()](https://towardsdatascience.com/methods-for-dealing-with-imbalanced-data-5b761be45a18).
+- [new BucketedRandomProjectionLSH()](https://towardsdatascience.com/having-an-imbalanced-dataset-here-is-how-you-can-solve-it-1640568947eb).
+- [new BucketedRandomProjectionLSH()](https://xgboost.readthedocs.io/en/latest/jvm/xgboost4j_spark_tutorial.html).https://xgboost.readthedocs.io/en/latest/jvm/xgboost4j_spark_tutorial.html).
+-[Introduction to Boosted Trees](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
 
 
 

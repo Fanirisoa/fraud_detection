@@ -35,10 +35,10 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
-
-
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
+import ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier
 
 
 
@@ -180,6 +180,38 @@ object Main extends SparkJob with StrictLogging{
     val irisDataFrame: DataFrame =  read(irisPathData)
     irisDataFrame.show()
     irisDataFrame.printSchema()
+
+    val stringIndexer: StringIndexerModel = new StringIndexer().
+      setInputCol("Name").
+      setOutputCol("ClassIndex").
+      fit(irisDataFrame)
+
+    val labelTransformed: DataFrame = stringIndexer.transform(irisDataFrame).drop("Name")
+    labelTransformed.show()
+
+
+
+
+    val irisAssembly :List[String] =     Seq("SepalLength","SepalWidth","PetalLength","PetalWidth").toList
+    val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"ClassIndex")
+    dataAssembly.show()
+
+
+
+
+// set the
+    val Array(training, test) = dataAssembly.randomSplit(Array(0.8, 0.2), 200)
+
+
+    val xgbParam: Map[String, Any] = Map("eta" -> 0.1f,
+      "max_depth" -> 2,
+      "objective" -> "multi:softprob",
+      "num_class" -> 3,
+      "num_round" -> 100,
+      "num_workers" -> 2)
+
+
+
 
 
 
