@@ -71,7 +71,7 @@ If I want to use HDFS path as initial path, I use the following environment :
 -[Awesome XGBoost](https://github.com/dmlc/xgboost/tree/master/demo).
 -[Complete Guide to Parameter Tuning in XGBoost ](https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/).
 -[xgboost/demo/](https://github.com/dmlc/xgboost/tree/master/demo#tutorials).
-
+-[SparkMLlibPipeline.scala](https://github.com/dmlc/xgboost/blob/master/jvm-packages/xgboost4j-example/src/main/scala/ml/dmlc/xgboost4j/scala/example/spark/SparkMLlibPipeline.scala).
 
 
 
