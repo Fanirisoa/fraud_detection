@@ -39,7 +39,9 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
 import ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier
-
+import org.apache.spark.ml.tuning._
+import org.apache.spark.ml.PipelineModel
+import ml.dmlc.xgboost4j.scala.spark.XGBoostClassificationModel
 
 
 
@@ -167,19 +169,11 @@ object Main extends SparkJob with StrictLogging{
     val irisPathData: Path = new Path(Settings.sparktrain.inputPath ++ "/"+ "iris" +"/"+ fileiris ++".csv")
 
 
-    val spark = SparkSession.builder().getOrCreate()
-
-    val schema = new StructType(Array(
-      StructField("sepal length", DoubleType, true),
-      StructField("sepal width", DoubleType, true),
-      StructField("petal length", DoubleType, true),
-      StructField("petal width", DoubleType, true),
-      StructField("class", StringType, true)))
-
 
     val irisDataFrame: DataFrame =  read(irisPathData)
     irisDataFrame.show()
     irisDataFrame.printSchema()
+
 
     val stringIndexer: StringIndexerModel = new StringIndexer().
       setInputCol("Name").
@@ -188,7 +182,6 @@ object Main extends SparkJob with StrictLogging{
 
     val labelTransformed: DataFrame = stringIndexer.transform(irisDataFrame).drop("Name")
     labelTransformed.show()
-
 
 
 
@@ -211,13 +204,13 @@ object Main extends SparkJob with StrictLogging{
       "num_workers" -> 2)
 
 
+    val xgbClassifier = new XGBoostClassifier().
+      setFeaturesCol("feature").
+      setLabelCol("ClassIndex")
 
-
-
+    val xgbClassificationModel: XGBoostClassificationModel = xgbClassifier.fit(dataAssembly)
 
   }
-
-
 }
 
 

@@ -68,8 +68,8 @@ If I want to use HDFS path as initial path, I use the following environment :
 - [new BucketedRandomProjectionLSH()](https://towardsdatascience.com/having-an-imbalanced-dataset-here-is-how-you-can-solve-it-1640568947eb).
 - [new BucketedRandomProjectionLSH()](https://xgboost.readthedocs.io/en/latest/jvm/xgboost4j_spark_tutorial.html).https://xgboost.readthedocs.io/en/latest/jvm/xgboost4j_spark_tutorial.html).
 -[Introduction to Boosted Trees](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
-
-
+-[Awesome XGBoost](https://github.com/dmlc/xgboost/tree/master/demo).
+-[Complete Guide to Parameter Tuning in XGBoost ](https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/).
 
 
 
