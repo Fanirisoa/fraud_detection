@@ -37,6 +37,10 @@ import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 
 
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+
+
 
 
 object Main extends SparkJob with StrictLogging{
@@ -139,7 +143,7 @@ object Main extends SparkJob with StrictLogging{
       3)
     val durationA04= (System.nanoTime - timeA04) / 5e9d
     println("Time to compute The KNN : " + durationA04)
-    dataKNN.show()
+
 
     // percentOver = 100 ===> Bucketlength = 2 , percentOver = 200 ===> Bucketlength = 5
     val timeA05= System.nanoTime
@@ -151,6 +155,22 @@ object Main extends SparkJob with StrictLogging{
 
     val dataDiAssembly: DataFrame =  featureDiAssembler(resSmote,allAssembly)
     dataDiAssembly.show()
+
+
+
+
+
+    val spark = SparkSession.builder().getOrCreate()
+    val schema = new StructType(Array(
+      StructField("sepal length", DoubleType, true),
+      StructField("sepal width", DoubleType, true),
+      StructField("petal length", DoubleType, true),
+      StructField("petal width", DoubleType, true),
+      StructField("class", StringType, true)))
+    val rawInput = spark.read.schema(schema).csv("input_path")
+
+
+
 
 
 
