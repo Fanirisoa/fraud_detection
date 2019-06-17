@@ -123,8 +123,9 @@ object Main extends SparkJob with StrictLogging{
     println("Time to compute the correlation matrix: " + durationA03)
     correlationMatrix.show(50)
 
-*/
+  */
 
+   /*
     println("-------------------------------")
     println("  Compute KNNcalculation :")
     println("-------------------------------")
@@ -158,19 +159,27 @@ object Main extends SparkJob with StrictLogging{
 
 
 
+    */
+
+
+
+    val fileiris: String = "iris"
+    val irisPathData: Path = new Path(Settings.sparktrain.inputPath ++ "/"+ "iris" +"/"+ fileiris ++".csv")
 
 
     val spark = SparkSession.builder().getOrCreate()
+
     val schema = new StructType(Array(
       StructField("sepal length", DoubleType, true),
       StructField("sepal width", DoubleType, true),
       StructField("petal length", DoubleType, true),
       StructField("petal width", DoubleType, true),
       StructField("class", StringType, true)))
-    val rawInput = spark.read.schema(schema).csv("input_path")
 
 
-
+    val irisDataFrame: DataFrame =  read(irisPathData)
+    irisDataFrame.show()
+    irisDataFrame.printSchema()
 
 
 
