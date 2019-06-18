@@ -21,8 +21,10 @@
 package fraude
 
 import com.typesafe.scalalogging.StrictLogging
+import fraude.XGBoostJOB.XGBoost.ParamXGBoostClassifier
 import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
+import fraude.XGBoostJOB.XGBoost._
 import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.BasicStatistics
 import fraude.smoteOverSample.smoteClass._
@@ -30,12 +32,10 @@ import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
-
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
-
 import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
-import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassifier, XGBoostClassificationModel}
+import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
 import org.apache.spark.ml.feature._
 import org.apache.spark.ml.tuning._
 import org.apache.spark.ml.{Pipeline, PipelineModel}
@@ -192,6 +192,8 @@ object Main extends SparkJob with StrictLogging{
 
 */
 
+
+    /*
     println("Split training and test dataset:")
 
     val Array(training, test) = irisDataFrame.randomSplit(Array(0.8, 0.2), 123)
@@ -212,6 +214,8 @@ object Main extends SparkJob with StrictLogging{
       .setInputCol("Name")
       .setOutputCol("classIndex")
       .fit(training)
+
+    val eta = 0.1f
 
     println("stage 3 : Use XGBoostClassifier to train classification model")
     val booster = new XGBoostClassifier(
@@ -240,9 +244,31 @@ object Main extends SparkJob with StrictLogging{
 
 
     println("Batch prediction")
-    val prediction = model.transform(test)
+    val prediction: DataFrame = model.transform(test)
     prediction.show(false)
 
+
+     */
+
+    val splitLevel : List[Double] = List(0.8,0.2)
+    val listColFeatures : Array[String] = Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+    val nameColClass : String = "Name"
+    val inputDataFram: DataFrame = irisDataFrame
+
+
+
+    val paramClassifier : ParamXGBoostClassifier = ParamXGBoostClassifier(0.1f, 2,  "multi:softprob", 3,100, 2)
+
+
+
+    val resultPrediction: DataFrame =  XGBoostPrediction(
+                                                        splitLevel,
+                                                        listColFeatures,
+                                                        nameColClass ,
+                                                        inputDataFram,
+                                                        paramClassifier
+                                                        )
+    resultPrediction.show(false)
   }
 }
 
