@@ -12,7 +12,7 @@ object XGBoost extends StrictLogging {
 
 
   def XGBoostPrediction(
-                        splitLevel : List[Double],
+                        splitLevel : Double,
                         listColFeatures : Array[String],
                         nameColClass : String,
                         inputDataFram: DataFrame,
@@ -21,7 +21,7 @@ object XGBoost extends StrictLogging {
 
 
     // Split training and test dataset:
-    val Array(training, test) = inputDataFram.randomSplit(Array(splitLevel(1), splitLevel(2)), 123)
+    val Array(training, test) = inputDataFram.randomSplit(Array(splitLevel, 1- splitLevel), 123)
 
 
     // Assemble all features into a single vector column :
@@ -29,13 +29,11 @@ object XGBoost extends StrictLogging {
       .setInputCols(listColFeatures)
       .setOutputCol("features")
 
-
     // From string label to indexed double label
     val labelIndexer = new StringIndexer()
       .setInputCol(nameColClass)
       .setOutputCol("classIndex")
       .fit(training)
-
 
 
     // Use XGBoostClassifier to train classification model:
@@ -52,19 +50,16 @@ object XGBoost extends StrictLogging {
     booster.setLabelCol("classIndex")
 
 
-
     // Convert indexed double label back to original string label:
     val labelConverter: IndexToString = new IndexToString()
       .setInputCol("prediction")
       .setOutputCol("realLabel")
       .setLabels(labelIndexer.labels)
 
-
     // Pipeline
     val pipeline: Pipeline = new Pipeline()
       .setStages(Array(assembler, labelIndexer, booster, labelConverter))
     val model: PipelineModel = pipeline.fit(training)
-
 
     model.transform(test)
   }

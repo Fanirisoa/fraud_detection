@@ -250,7 +250,7 @@ object Main extends SparkJob with StrictLogging{
 
      */
 
-    val splitLevel : List[Double] = List(0.8,0.2)
+    val splitLevel : Double = 0.8
     val listColFeatures : Array[String] = Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
     val nameColClass : String = "Name"
     val inputDataFram: DataFrame = irisDataFrame
