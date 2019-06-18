@@ -36,6 +36,7 @@ import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature._
 import org.apache.spark.ml.tuning._
 import org.apache.spark.ml.{Pipeline, PipelineModel}
@@ -269,6 +270,12 @@ object Main extends SparkJob with StrictLogging{
                                                         paramClassifier
                                                         )
     resultPrediction.show(false)
+
+
+
+
+
+
   }
 }
 

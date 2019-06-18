@@ -2,6 +2,7 @@ package fraude.XGBoostJOB
 
 import com.typesafe.scalalogging.StrictLogging
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.{Pipeline, PipelineModel}
 import org.apache.spark.ml.feature.{IndexToString, StringIndexer, VectorAssembler}
 import org.apache.spark.sql.DataFrame
@@ -15,13 +16,13 @@ object XGBoost extends StrictLogging {
                         splitLevel : Double,
                         listColFeatures : Array[String],
                         nameColClass : String,
-                        inputDataFram: DataFrame,
+                        inputDataFrame: DataFrame,
                         paramClassifier : ParamXGBoostClassifier
-                      ): DataFrame= {
+                      ): Pipeline = {
 
 
     // Split training and test dataset:
-    val Array(training, test) = inputDataFram.randomSplit(Array(splitLevel, 1- splitLevel), 123)
+    val Array(training, test) = inputDataFrame.randomSplit(Array(splitLevel, 1 - splitLevel), 123)
 
 
     // Assemble all features into a single vector column :
@@ -57,12 +58,40 @@ object XGBoost extends StrictLogging {
       .setLabels(labelIndexer.labels)
 
     // Pipeline
-    val pipeline: Pipeline = new Pipeline()
+    val Pipeline = new Pipeline()
       .setStages(Array(assembler, labelIndexer, booster, labelConverter))
+
+    Pipeline
+  }
+
+  def XGBoostPrediction(
+                         pipeline: Pipeline,
+                         training: DataFrame,
+                         test: DataFrame
+                       ): DataFrame= {
+
     val model: PipelineModel = pipeline.fit(training)
 
     model.transform(test)
   }
+
+
+  def evalPrediction(resultPrediction: DataFrame
+                      ): Double= {
+    // Model evaluation
+    val evaluator = new MulticlassClassificationEvaluator()
+    evaluator.setLabelCol("classIndex")
+    evaluator.setPredictionCol("prediction")
+
+    evaluator.evaluate(resultPrediction)
+
+  }
+
+
+
+
+
+
 
 
 }
