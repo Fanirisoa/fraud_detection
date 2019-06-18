@@ -27,7 +27,7 @@ object KnnJob extends StrictLogging {
 
 
    def featureDiAssembler(dataFinal: DataFrame,
-                         colList: List[String],
+                         colList: List[String]
                         ): DataFrame= {
 
      val colLength: Int = colList.length

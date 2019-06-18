@@ -48,7 +48,7 @@ case class MetricRow(
   countDistinct: Option[Long],
   countByCategory: Option[Map[String, Long]],
   frequencies: Option[Map[String, Double]],
-  missingValuesDiscrete: Option[Long],
+  missingValuesDiscrete: Option[Long]
 )
 
 object MetricsJob extends SparkJob {

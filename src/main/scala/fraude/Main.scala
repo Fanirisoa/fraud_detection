@@ -36,7 +36,9 @@ import org.apache.spark.sql.functions._
 
 import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassifier, XGBoostClassificationModel}
-
+import org.apache.spark.ml.feature._
+import org.apache.spark.ml.tuning._
+import org.apache.spark.ml.{Pipeline, PipelineModel}
 
 
 
@@ -169,7 +171,7 @@ object Main extends SparkJob with StrictLogging{
     irisDataFrame.show()
     irisDataFrame.printSchema()
 
-
+/*
 
 
     // 1. From string label to indexed double label.
@@ -188,22 +190,58 @@ object Main extends SparkJob with StrictLogging{
     val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"classIndex")
     dataAssembly.show(3)
 
-    println("booster : ")
+*/
+
+    println("Split training and test dataset:")
+
+    val Array(training, test) = irisDataFrame.randomSplit(Array(0.8, 0.2), 123)
+
+    // Build ML pipeline, it includes 4 stages:
+    // 1, Assemble all features into a single vector column.
+    // 2, From string label to indexed double label.
+    // 3, Use XGBoostClassifier to train classification model.
+    // 4, Convert indexed double label back to original string label.
+
+    println("stage 1 : Assemble all features into a single vector column")
+    val assembler = new VectorAssembler()
+      .setInputCols(Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth"))
+      .setOutputCol("features")
+
+    println("stage 2 : From string label to indexed double label")
+    val labelIndexer = new StringIndexer()
+      .setInputCol("Name")
+      .setOutputCol("classIndex")
+      .fit(training)
+
+    println("stage 3 : Use XGBoostClassifier to train classification model")
     val booster = new XGBoostClassifier(
-                                        Map("eta" -> 0.1f,
-                                          "max_depth" -> 2,
-                                          "objective" -> "multi:softprob",
-                                          "num_class" -> 3,
-                                          "num_round" -> 100,
-                                          "num_workers" -> 2
-                                        )
-                                      )
-
-
-    println("booster result: ")
+      Map("eta" -> 0.1f,
+        "max_depth" -> 2,
+        "objective" -> "multi:softprob",
+        "num_class" -> 3,
+        "num_round" -> 100,
+        "num_workers" -> 2
+      )
+    )
     booster.setFeaturesCol("features")
     booster.setLabelCol("classIndex")
 
+    println("stage 4 : Convert indexed double label back to original string label")
+    val labelConverter: IndexToString = new IndexToString()
+      .setInputCol("prediction")
+      .setOutputCol("realLabel")
+      .setLabels(labelIndexer.labels)
+
+
+    println("Pipeline")
+    val pipeline: Pipeline = new Pipeline()
+      .setStages(Array(assembler, labelIndexer, booster, labelConverter))
+    val model: PipelineModel = pipeline.fit(training)
+
+
+    println("Batch prediction")
+    val prediction = model.transform(test)
+    prediction.show(false)
 
   }
 }

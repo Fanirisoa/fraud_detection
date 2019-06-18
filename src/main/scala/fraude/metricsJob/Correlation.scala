@@ -33,7 +33,7 @@ object Correlation extends StrictLogging {
 
   def computeCorrelationMatrix(
                                 dataInit: DataFrame,
-                                attributes: List[String],
+                                attributes: List[String]
                               ): DataFrame = {
     val headerDataUse = dataInit.columns.toList
     val intersectionHeaderAttributes = headerDataUse.intersect(attributes)
