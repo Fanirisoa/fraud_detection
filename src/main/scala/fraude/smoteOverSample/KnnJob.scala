@@ -17,9 +17,9 @@ object KnnJob extends StrictLogging {
                       ): DataFrame= {
     val assembler = new VectorAssembler()
       .setInputCols(colList.toArray)
-      .setOutputCol("feature")
+      .setOutputCol("features")
 
-    val colFinal : List[String]= List(colLabel,"feature")
+    val colFinal : List[String]= List(colLabel,"features")
 
     assembler.transform(dataFinal)
       .select(colFinal.head, colFinal.tail: _*)
@@ -35,10 +35,10 @@ object KnnJob extends StrictLogging {
     def convertVectorToArray: UserDefinedFunction = udf((features: Vector) => features.toArray)
 
     // Add a ArrayType Column
-    val dfArr: DataFrame = dataFinal.withColumn("featuresArr" , convertVectorToArray(dataFinal("feature")))
+    val dfArr: DataFrame = dataFinal.withColumn("featuresArr" , convertVectorToArray(dataFinal("features")))
 
 
-    dfArr.select(col("*") +: (0 until colLength-1).map(i => column("featuresArr").getItem(i).as(colList(i))): _*).drop("featuresArr","feature")
+    dfArr.select(col("*") +: (0 until colLength-1).map(i => column("featuresArr").getItem(i).as(colList(i))): _*).drop("featuresArr","features")
 
   }
 

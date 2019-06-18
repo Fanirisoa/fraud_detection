@@ -41,12 +41,18 @@ object Dependencies {
     "org.apache.spark" %% "spark-mllib" % Versions.spark
   )
 
+
   val xGBoost = Seq(
     "ml.dmlc" % "xgboost4j-spark" % Versions.xGBoost,
     "ml.dmlc" % "xgboost4j" % Versions.xGBoost
   )
 
-  val dependencies = spark ++ scalaTest ++ logging ++ typedConfigs++xGBoost
+
+  val scalalibrary = Seq( "org.scala-lang" % "scala-library" % Versions.scalalibrary
+  )
+
+
+  val dependencies = spark ++ scalaTest ++ logging ++ typedConfigs++xGBoost ++scalalibrary
 
 }
 

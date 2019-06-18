@@ -30,18 +30,13 @@ import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.broadcast.Broadcast
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.expressions.UserDefinedFunction
+
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+
 import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
-import ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier
-import org.apache.spark.ml.tuning._
-import org.apache.spark.ml.PipelineModel
-import ml.dmlc.xgboost4j.scala.spark.XGBoostClassificationModel
+import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassifier, XGBoostClassificationModel}
+
 
 
 
@@ -175,21 +170,39 @@ object Main extends SparkJob with StrictLogging{
     irisDataFrame.printSchema()
 
 
+
+
+    // 1. From string label to indexed double label.
     val stringIndexer: StringIndexerModel = new StringIndexer().
       setInputCol("Name").
-      setOutputCol("ClassIndex").
+      setOutputCol("classIndex").
       fit(irisDataFrame)
 
     val labelTransformed: DataFrame = stringIndexer.transform(irisDataFrame).drop("Name")
     labelTransformed.show()
 
 
+    // 2.  Assemble all features into a single vector column.
 
     val irisAssembly :List[String] =     Seq("SepalLength","SepalWidth","PetalLength","PetalWidth").toList
-    val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"ClassIndex")
+    val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"classIndex")
     dataAssembly.show(3)
 
+    println("booster : ")
+    val booster = new XGBoostClassifier(
+                                        Map("eta" -> 0.1f,
+                                          "max_depth" -> 2,
+                                          "objective" -> "multi:softprob",
+                                          "num_class" -> 3,
+                                          "num_round" -> 100,
+                                          "num_workers" -> 2
+                                        )
+                                      )
 
+
+    println("booster result: ")
+    booster.setFeaturesCol("features")
+    booster.setLabelCol("classIndex")
 
 
   }
