@@ -4,7 +4,7 @@
 		module="fraud_detection_2.12"
 		revision="0.1"
 		status="integration"
-		publication="20190618104956"
+		publication="20190618105145"
 	>
 		<description>
 		fraud_detection
@@ -41,6 +41,6 @@
 		<dependency org="com.github.kxbmap" name="configs_2.12" rev="0.4.4" conf="compile->default(compile)"/>
 		<dependency org="ml.dmlc" name="xgboost4j-spark" rev="0.82" conf="compile->default(compile)"/>
 		<dependency org="ml.dmlc" name="xgboost4j" rev="0.82" conf="compile->default(compile)"/>
-		<dependency org="org.scala-lang" name="scala-library" rev="2.12" conf="compile->default(compile)"/>
+		<dependency org="org.scala-lang" name="scala-library" rev="2.11.4" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

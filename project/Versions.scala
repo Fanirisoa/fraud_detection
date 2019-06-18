@@ -25,5 +25,5 @@ object Versions {
   val scalaLogging = "3.9.0"
   val configs = "0.4.4"
   val xGBoost= "0.82"
-  val scalalibrary = "2.12"
+  val scalalibrary = "2.11.4"
 }
