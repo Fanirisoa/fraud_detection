@@ -187,28 +187,10 @@ object Main extends SparkJob with StrictLogging{
 
     val irisAssembly :List[String] =     Seq("SepalLength","SepalWidth","PetalLength","PetalWidth").toList
     val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"ClassIndex")
-    dataAssembly.show()
+    dataAssembly.show(3)
 
 
 
-
-// set the
-    val Array(training, test) = dataAssembly.randomSplit(Array(0.8, 0.2), 200)
-
-
-    val xgbParam: Map[String, Any] = Map("eta" -> 0.1f,
-      "max_depth" -> 2,
-      "objective" -> "multi:softprob",
-      "num_class" -> 3,
-      "num_round" -> 100,
-      "num_workers" -> 2)
-
-
-    val xgbClassifier = new XGBoostClassifier().
-      setFeaturesCol("feature").
-      setLabelCol("ClassIndex")
-
-    val xgbClassificationModel: XGBoostClassificationModel = xgbClassifier.fit(dataAssembly)
 
   }
 }
