@@ -25,6 +25,7 @@ import fraude.XGBoostJOB.XGBoost.ParamXGBoostClassifier
 import fraude.confSpark.conf.Settings
 import fraude.sparkjob.SparkJob
 import fraude.XGBoostJOB.XGBoost._
+import fraude.XGBoostJOB.XGBoostCVTune._
 import fraude.metricsJob.MetricsJob.{sparkSession, _}
 import fraude.metricsJob.BasicStatistics
 import fraude.smoteOverSample.smoteClass._
@@ -261,12 +262,12 @@ object Main extends SparkJob with StrictLogging{
 
 
     val resultPrediction: DataFrame =  xGBoostSimplePrediction(
-                                                        splitLevel,
-                                                        listColFeatures,
-                                                        nameColClass ,
-                                                        inputDataFram,
-                                                        paramClassifier
-                                                        )
+                                                                splitLevel,
+                                                                listColFeatures,
+                                                                nameColClass ,
+                                                                inputDataFram,
+                                                                paramClassifier
+                                                              )
     resultPrediction.show(false)
 
 
@@ -280,15 +281,11 @@ object Main extends SparkJob with StrictLogging{
     val foldNum = 3
 
     val resultPrediction2 =  xGBoostcrossValTune(
-                             splitLevel,
-                             listColFeatures,
-                             nameColClass,
-                             inputDataFram,
-                             paramClassifier,
-                             maxDepthGrid,
-                             etaGrid,
-                             foldNum
-                           )
+                                                  splitLevel,
+                                                  listColFeatures,
+                                                  nameColClass,
+                                                  inputDataFram
+                                                )
     resultPrediction2.show(false)
 
     val resultEvaluation: Double=  evalPrediction(resultPrediction)

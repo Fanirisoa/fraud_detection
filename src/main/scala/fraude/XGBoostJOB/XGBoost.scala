@@ -104,58 +104,6 @@ object XGBoost extends StrictLogging {
   }
 
 
-
-  def xGBoostcrossValTune(
-                           splitLevel : Double,
-                           listColFeatures : Array[String],
-                           nameColClass : String,
-                           inputDataFrame: DataFrame,
-                           paramClassifier : ParamXGBoostClassifier,
-                           maxDepthGrid : Array[Int],
-                           etaGrid: Array[Double],
-                           foldNum : Int
-                         ): DataFrame = {
-
-    val modelPipeline= boosterPipeline( splitLevel,
-      listColFeatures,
-      nameColClass,
-      inputDataFrame,
-      paramClassifier
-    )
-    val booster: XGBoostClassifier = modelPipeline._1
-    val pipeline: Pipeline = modelPipeline._2
-    val training: DataFrame = modelPipeline._3
-    val test: DataFrame = modelPipeline._4
-    
-
-    // Model evaluation
-    val evaluator: MulticlassClassificationEvaluator = new MulticlassClassificationEvaluator()
-    evaluator.setLabelCol("classIndex")
-    evaluator.setPredictionCol("prediction")
-
-
-    // Tune paramGrid
-    val paramGrid: Array[ParamMap] = new ParamGridBuilder()
-      .addGrid(booster.maxDepth, maxDepthGrid)
-      .addGrid(booster.eta, etaGrid)
-      .build()
-
-
-    val cv: CrossValidator = new CrossValidator()
-      .setEstimator(pipeline)
-      .setEvaluator(evaluator)
-      .setEstimatorParamMaps(paramGrid)
-      .setNumFolds(foldNum)
-
-    val cvModel: CrossValidatorModel = cv.fit(training)
-
-    val results: DataFrame = cvModel.transform(test)
-
-    results
-
-  }
-
-
 }
 
 
