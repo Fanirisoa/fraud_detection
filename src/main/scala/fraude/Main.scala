@@ -293,7 +293,8 @@ object Main extends SparkJob with StrictLogging{
 
     val resultEvaluation: Double=  evalPrediction(resultPrediction)
     val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
-
+    println(resultEvaluation)
+    println(resultEvaluation2)
 
 
   }

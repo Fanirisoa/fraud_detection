@@ -126,10 +126,7 @@ object XGBoost extends StrictLogging {
     val pipeline: Pipeline = modelPipeline._2
     val training: DataFrame = modelPipeline._3
     val test: DataFrame = modelPipeline._4
-
-
-    val model: PipelineModel = pipeline.fit(training)
-    val prediction: DataFrame = model.transform(test)
+    
 
     // Model evaluation
     val evaluator: MulticlassClassificationEvaluator = new MulticlassClassificationEvaluator()
@@ -152,19 +149,10 @@ object XGBoost extends StrictLogging {
 
     val cvModel: CrossValidatorModel = cv.fit(training)
 
-    val bestModel: ParamXGBoostClassifier = cvModel.bestModel.asInstanceOf[PipelineModel].stages(2)
-      .asInstanceOf[ParamXGBoostClassifier]
+    val results: DataFrame = cvModel.transform(test)
 
-    // Export the XGBoostClassificationModel as local XGBoost model,
-    val goodModel: DataFrame = xGBoostSimplePrediction(
-                                            splitLevel,
-                                            listColFeatures,
-                                            nameColClass,
-                                            inputDataFrame,
-                                            bestModel
-                                          )
+    results
 
-    goodModel
   }
 
 
