@@ -12,7 +12,7 @@ object XGBoost extends StrictLogging {
   case class ParamXGBoostClassifier(eta : Float, max_depth : Int, objective : String, num_class : Long, num_round:  Long, num_workers: Int)
 
 
-  def XGBoostPrediction(
+  def boosterPipeline(
                         splitLevel : Double,
                         listColFeatures : Array[String],
                         nameColClass : String,
@@ -64,7 +64,7 @@ object XGBoost extends StrictLogging {
     Pipeline
   }
 
-  def XGBoostPrediction(
+  def xGBoostPrediction(
                          pipeline: Pipeline,
                          training: DataFrame,
                          test: DataFrame
