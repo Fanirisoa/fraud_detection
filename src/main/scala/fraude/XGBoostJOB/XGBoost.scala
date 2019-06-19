@@ -5,6 +5,8 @@ import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassif
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.{Pipeline, PipelineModel}
 import org.apache.spark.ml.feature.{IndexToString, StringIndexer, VectorAssembler}
+import org.apache.spark.ml.param.ParamMap
+import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGridBuilder}
 import org.apache.spark.sql.DataFrame
 
 object XGBoost extends StrictLogging {
@@ -18,7 +20,7 @@ object XGBoost extends StrictLogging {
                         nameColClass : String,
                         inputDataFrame: DataFrame,
                         paramClassifier : ParamXGBoostClassifier
-                      ): Pipeline = {
+                      ): (XGBoostClassifier, Pipeline, DataFrame, DataFrame) = {
 
 
     // Split training and test dataset:
@@ -38,7 +40,7 @@ object XGBoost extends StrictLogging {
 
 
     // Use XGBoostClassifier to train classification model:
-    val booster = new XGBoostClassifier(
+    val booster: XGBoostClassifier = new XGBoostClassifier(
       Map("eta" -> paramClassifier.eta,
         "max_depth" -> paramClassifier.max_depth,
         "objective" -> paramClassifier.objective,
@@ -61,14 +63,27 @@ object XGBoost extends StrictLogging {
     val Pipeline = new Pipeline()
       .setStages(Array(assembler, labelIndexer, booster, labelConverter))
 
-    Pipeline
+    (booster,Pipeline, training, test)
   }
 
-  def xGBoostPrediction(
-                         pipeline: Pipeline,
-                         training: DataFrame,
-                         test: DataFrame
+  def xGBoostSimplePrediction(
+                         splitLevel : Double,
+                         listColFeatures : Array[String],
+                         nameColClass : String,
+                         inputDataFrame: DataFrame,
+                         paramClassifier : ParamXGBoostClassifier
                        ): DataFrame= {
+
+
+    val modelPipeline= boosterPipeline( splitLevel,
+                                 listColFeatures,
+                                 nameColClass,
+                                 inputDataFrame,
+                                 paramClassifier
+                               )
+    val pipeline: Pipeline = modelPipeline._2
+    val training: DataFrame = modelPipeline._3
+    val test: DataFrame = modelPipeline._4
 
     val model: PipelineModel = pipeline.fit(training)
 
@@ -76,22 +91,74 @@ object XGBoost extends StrictLogging {
   }
 
 
-  def evalPrediction(resultPrediction: DataFrame
+  def evalPrediction(prediction: DataFrame
                       ): Double= {
     // Model evaluation
     val evaluator = new MulticlassClassificationEvaluator()
     evaluator.setLabelCol("classIndex")
     evaluator.setPredictionCol("prediction")
 
-    evaluator.evaluate(resultPrediction)
+    evaluator.evaluate(prediction)
 
   }
 
 
 
+  def xGBoostcrossValTune(
+                           splitLevel : Double,
+                           listColFeatures : Array[String],
+                           nameColClass : String,
+                           inputDataFrame: DataFrame,
+                           paramClassifier : ParamXGBoostClassifier,
+                           maxDepthGrid : Array[Int],
+                           etaGrid: Array[Double],
+                           foldNum : Int
+                         ): DataFrame= {
+
+    val modelPipeline= boosterPipeline( splitLevel,
+      listColFeatures,
+      nameColClass,
+      inputDataFrame,
+      paramClassifier
+    )
+    val booster: XGBoostClassifier = modelPipeline._1
+    val pipeline: Pipeline = modelPipeline._2
+    val training: DataFrame = modelPipeline._3
+    val test: DataFrame = modelPipeline._4
 
 
+    val model: PipelineModel = pipeline.fit(training)
+    val prediction: DataFrame = model.transform(test)
 
+    // Model evaluation
+    val evaluator: MulticlassClassificationEvaluator = new MulticlassClassificationEvaluator()
+    evaluator.setLabelCol("classIndex")
+    evaluator.setPredictionCol("prediction")
+
+
+    // Tune paramGrid
+    val paramGrid: Array[ParamMap] = new ParamGridBuilder()
+      .addGrid(booster.maxDepth, maxDepthGrid)
+      .addGrid(booster.eta, etaGrid)
+      .build()
+
+
+    val cv: CrossValidator = new CrossValidator()
+      .setEstimator(pipeline)
+      .setEvaluator(evaluator)
+      .setEstimatorParamMaps(paramGrid)
+      .setNumFolds(foldNum)
+
+    val cvModel: CrossValidatorModel = cv.fit(training)
+
+    val prediction2: DataFrame = cvModel.transform(test)
+
+    val bestModel: XGBoostClassificationModel = cvModel.bestModel.asInstanceOf[PipelineModel].stages(2)
+      .asInstanceOf[XGBoostClassificationModel]
+
+    prediction2
+
+  }
 
 
 }

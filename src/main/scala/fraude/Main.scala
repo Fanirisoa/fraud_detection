@@ -255,14 +255,11 @@ object Main extends SparkJob with StrictLogging{
     val listColFeatures : Array[String] = Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
     val nameColClass : String = "Name"
     val inputDataFram: DataFrame = irisDataFrame
-
-
-
     val paramClassifier : ParamXGBoostClassifier = ParamXGBoostClassifier(0.1f, 2,  "multi:softprob", 3,100, 2)
 
 
 
-    val resultPrediction: DataFrame =  XGBoostPrediction(
+    val resultPrediction: DataFrame =  xGBoostSimplePrediction(
                                                         splitLevel,
                                                         listColFeatures,
                                                         nameColClass ,
@@ -271,7 +268,31 @@ object Main extends SparkJob with StrictLogging{
                                                         )
     resultPrediction.show(false)
 
+    val resultEvaluation: Double=  evalPrediction(resultPrediction)
 
+   println(resultEvaluation)
+
+    val maxDepthGrid = Array(3, 8)
+
+
+    val etaGrid =  Array(0.2, 0.6)
+
+    val foldNum = 3
+
+    val resultPrediction2: DataFrame =  xGBoostcrossValTune(
+                             splitLevel,
+                             listColFeatures,
+                             nameColClass,
+                             inputDataFrame,
+                             paramClassifier,
+                             maxDepthGrid,
+                             etaGrid,
+                             foldNum
+                           )
+    resultPrediction2.show(false)
+
+
+    val resultEvaluation2 : Double=  evalPrediction(resultPrediction2)
 
 
 
