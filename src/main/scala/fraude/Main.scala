@@ -38,6 +38,7 @@ import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature._
+import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.tuning._
 import org.apache.spark.ml.{Pipeline, PipelineModel}
 
@@ -268,9 +269,8 @@ object Main extends SparkJob with StrictLogging{
                                                         )
     resultPrediction.show(false)
 
-    val resultEvaluation: Double=  evalPrediction(resultPrediction)
 
-   println(resultEvaluation)
+
 
     val maxDepthGrid = Array(3, 8)
 
@@ -279,11 +279,11 @@ object Main extends SparkJob with StrictLogging{
 
     val foldNum = 3
 
-    val resultPrediction2: DataFrame =  xGBoostcrossValTune(
+    val resultPrediction2 =  xGBoostcrossValTune(
                              splitLevel,
                              listColFeatures,
                              nameColClass,
-                             inputDataFrame,
+                             inputDataFram,
                              paramClassifier,
                              maxDepthGrid,
                              etaGrid,
@@ -291,9 +291,8 @@ object Main extends SparkJob with StrictLogging{
                            )
     resultPrediction2.show(false)
 
-
-    val resultEvaluation2 : Double=  evalPrediction(resultPrediction2)
-
+    val resultEvaluation: Double=  evalPrediction(resultPrediction)
+    val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
 
 
 

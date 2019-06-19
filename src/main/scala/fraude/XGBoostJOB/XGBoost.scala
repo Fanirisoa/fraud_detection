@@ -1,6 +1,7 @@
 package fraude.XGBoostJOB
 
 import com.typesafe.scalalogging.StrictLogging
+import ml.dmlc.xgboost4j.scala.Booster
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.{Pipeline, PipelineModel}
@@ -113,7 +114,7 @@ object XGBoost extends StrictLogging {
                            maxDepthGrid : Array[Int],
                            etaGrid: Array[Double],
                            foldNum : Int
-                         ): DataFrame= {
+                         ): DataFrame = {
 
     val modelPipeline= boosterPipeline( splitLevel,
       listColFeatures,
@@ -151,13 +152,19 @@ object XGBoost extends StrictLogging {
 
     val cvModel: CrossValidatorModel = cv.fit(training)
 
-    val prediction2: DataFrame = cvModel.transform(test)
+    val bestModel: ParamXGBoostClassifier = cvModel.bestModel.asInstanceOf[PipelineModel].stages(2)
+      .asInstanceOf[ParamXGBoostClassifier]
 
-    val bestModel: XGBoostClassificationModel = cvModel.bestModel.asInstanceOf[PipelineModel].stages(2)
-      .asInstanceOf[XGBoostClassificationModel]
+    // Export the XGBoostClassificationModel as local XGBoost model,
+    val goodModel: DataFrame = xGBoostSimplePrediction(
+                                            splitLevel,
+                                            listColFeatures,
+                                            nameColClass,
+                                            inputDataFrame,
+                                            bestModel
+                                          )
 
-    prediction2
-
+    goodModel
   }
 
 
