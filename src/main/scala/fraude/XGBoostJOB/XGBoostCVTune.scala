@@ -18,7 +18,8 @@ object XGBoostCVTune extends StrictLogging {
                            splitLevel : Double,
                            listColFeatures : Array[String],
                            nameColClass : String,
-                           inputDataFrame: DataFrame
+                           inputDataFrame: DataFrame,
+                           foldNum: Int
                          ): DataFrame = {
 
     // Split training and test dataset:
@@ -46,15 +47,15 @@ object XGBoostCVTune extends StrictLogging {
 
     // Create default param map for XGBoost
     val paramMapInitial = Map(
-      "eta" -> 0.1f,
-      "maxDepth" -> 2,
+      "eta" -> 0.2f,
+      "maxDepth" -> 5,
       "gamma" -> 0.0,
       "colsample_bylevel" -> 1,
       "objective" -> "multi:softprob",
       "num_class" -> 3,
       "booster" -> "gbtree",
       "numRound" -> 100,
-      "num_workers" -> 3
+      "num_workers" -> 4
     )
 
 
@@ -91,7 +92,7 @@ object XGBoostCVTune extends StrictLogging {
       .setEstimator(pipeline)
       .setEvaluator(evaluator)
       .setEstimatorParamMaps(paramGrid)
-      .setNumFolds(10)
+      .setNumFolds(foldNum)
 
     val cvModel: CrossValidatorModel = cv.fit(training)
 
