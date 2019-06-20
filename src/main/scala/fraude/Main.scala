@@ -189,6 +189,10 @@ object Main extends SparkJob with StrictLogging{
     resSmote.show()
     resultPrediction.show(false)
 
+    val resultEvaluation: Double=  evalPrediction(resultPrediction)
+    println(resultEvaluation)
+
+
 
     val splitLevel2 : Double = 0.82
     val foldNum = 4
@@ -206,7 +210,7 @@ object Main extends SparkJob with StrictLogging{
     resSmote.show()
     resultPrediction2.show(false)
 
-    val resultEvaluation: Double=  evalPrediction(resultPrediction)
+
     val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
     println(resultEvaluation)
     println(resultEvaluation2)
