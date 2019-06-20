@@ -23,8 +23,9 @@ object XGBoostCVTune extends StrictLogging {
                          ): DataFrame = {
 
     // Split training and test dataset:
-    val Array(training, test) = inputDataFrame.randomSplit(Array(splitLevel, 1 - splitLevel), 123)
-
+    val splits  = inputDataFrame.randomSplit(Array(splitLevel, 1 - splitLevel), 123)
+    val training = splits(0).cache()
+    val test = splits(1).cache()
 
     // Assemble all features into a single vector column :
     val assembler = new VectorAssembler()
