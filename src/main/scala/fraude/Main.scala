@@ -73,8 +73,8 @@ object Main extends SparkJob with StrictLogging{
     val inputDataFrame: DataFrame =  read(inputPathData)
    // inputDataFrame.show(20)
 
-    val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
-    val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
+  //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
+   // val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
     val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
@@ -127,15 +127,17 @@ object Main extends SparkJob with StrictLogging{
 
   */
 
-   /*
+
     println("-------------------------------")
-    println("  Compute KNNcalculation :")
+    println("    Compute KNNcalculation    :")
     println("-------------------------------")
 
     val dataReduice: DataFrame = dataUse.limit(10000)
 
     val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Time").toList
     val dataAssembly: DataFrame =  featureAssembler(dataReduice,allAssembly,"Class")
+    dataAssembly.show()
+
 
     val timeA04= System.nanoTime
     val dataKNN: DataFrame =  KNNCalculation(dataAssembly,
@@ -160,11 +162,61 @@ object Main extends SparkJob with StrictLogging{
     dataDiAssembly.show()
 
 
+    println("-------------------------------")
+    println("        Using XGBOOST         :")
+    println("-------------------------------")
 
-    */
 
 
 
+    val splitLevel : Double = 0.8
+    val listColFeatures : Array[String] = allAssembly.toArray
+    val nameColClass : String = "Class"
+    val inputDataFram: DataFrame = dataDiAssembly
+    val paramClassifier : ParamXGBoostClassifier = ParamXGBoostClassifier(0.3f, 2,  "multi:softprob", 2,200, 3)
+
+
+    val timeA06= System.nanoTime
+    val resultPrediction: DataFrame =  xGBoostSimplePrediction(
+      splitLevel,
+      listColFeatures,
+      nameColClass ,
+      inputDataFram,
+      paramClassifier
+    )
+    val durationA06= (System.nanoTime - timeA06) / 5e9d
+    println("Time to compute the SmoteOversampling: " + durationA06)
+    resSmote.show()
+    resultPrediction.show(false)
+
+
+    val splitLevel2 : Double = 0.82
+    val foldNum = 4
+
+    val timeA07= System.nanoTime
+    val resultPrediction2 =  xGBoostcrossValTune(
+      splitLevel2,
+      listColFeatures,
+      nameColClass,
+      inputDataFram,
+      foldNum
+    )
+    val durationA07= (System.nanoTime - timeA07) / 5e9d
+    println("Time to compute the SmoteOversampling: " + durationA07)
+    resSmote.show()
+    resultPrediction2.show(false)
+
+    val resultEvaluation: Double=  evalPrediction(resultPrediction)
+    val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
+    println(resultEvaluation)
+    println(resultEvaluation2)
+
+
+
+
+
+
+/*
     val fileiris: String = "iris"
     val irisPathData: Path = new Path(Settings.sparktrain.inputPath ++ "/"+ "iris" +"/"+ fileiris ++".csv")
 
@@ -174,90 +226,13 @@ object Main extends SparkJob with StrictLogging{
     irisDataFrame.show()
     irisDataFrame.printSchema()
 
-/*
 
-
-    // 1. From string label to indexed double label.
-    val stringIndexer: StringIndexerModel = new StringIndexer().
-      setInputCol("Name").
-      setOutputCol("classIndex").
-      fit(irisDataFrame)
-
-    val labelTransformed: DataFrame = stringIndexer.transform(irisDataFrame).drop("Name")
-    labelTransformed.show()
-
-
-    // 2.  Assemble all features into a single vector column.
-
-    val irisAssembly :List[String] =     Seq("SepalLength","SepalWidth","PetalLength","PetalWidth").toList
-    val dataAssembly: DataFrame =  featureAssembler(labelTransformed,irisAssembly,"classIndex")
-    dataAssembly.show(3)
-
-*/
-
-
-    /*
-    println("Split training and test dataset:")
-
-    val Array(training, test) = irisDataFrame.randomSplit(Array(0.8, 0.2), 123)
-
-    // Build ML pipeline, it includes 4 stages:
-    // 1, Assemble all features into a single vector column.
-    // 2, From string label to indexed double label.
-    // 3, Use XGBoostClassifier to train classification model.
-    // 4, Convert indexed double label back to original string label.
-
-    println("stage 1 : Assemble all features into a single vector column")
-    val assembler = new VectorAssembler()
-      .setInputCols(Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth"))
-      .setOutputCol("features")
-
-    println("stage 2 : From string label to indexed double label")
-    val labelIndexer = new StringIndexer()
-      .setInputCol("Name")
-      .setOutputCol("classIndex")
-      .fit(training)
-
-    val eta = 0.1f
-
-    println("stage 3 : Use XGBoostClassifier to train classification model")
-    val booster = new XGBoostClassifier(
-      Map("eta" -> 0.1f,
-        "max_depth" -> 2,
-        "objective" -> "multi:softprob",
-        "num_class" -> 3,
-        "num_round" -> 100,
-        "num_workers" -> 2
-      )
-    )
-    booster.setFeaturesCol("features")
-    booster.setLabelCol("classIndex")
-
-    println("stage 4 : Convert indexed double label back to original string label")
-    val labelConverter: IndexToString = new IndexToString()
-      .setInputCol("prediction")
-      .setOutputCol("realLabel")
-      .setLabels(labelIndexer.labels)
-
-
-    println("Pipeline")
-    val pipeline: Pipeline = new Pipeline()
-      .setStages(Array(assembler, labelIndexer, booster, labelConverter))
-    val model: PipelineModel = pipeline.fit(training)
-
-
-    println("Batch prediction")
-    val prediction: DataFrame = model.transform(test)
-    prediction.show(false)
-
-
-     */
 
     val splitLevel : Double = 0.8
     val listColFeatures : Array[String] = Array("SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
     val nameColClass : String = "Name"
     val inputDataFram: DataFrame = irisDataFrame
-    val paramClassifier : ParamXGBoostClassifier = ParamXGBoostClassifier(0.3f, 2,  "multi:softprob", 3,200, 5)
+    val paramClassifier : ParamXGBoostClassifier = ParamXGBoostClassifier(0.3f, 2,  "multi:softprob", 3,200, 3)
 
 
 
@@ -289,6 +264,8 @@ object Main extends SparkJob with StrictLogging{
     println(resultEvaluation2)
 
 
+
+ */
   }
 }
 

@@ -52,7 +52,7 @@ object XGBoostCVTune extends StrictLogging {
       "gamma" -> 0.0,
       "colsample_bylevel" -> 1,
       "objective" -> "multi:softprob",
-      "num_class" -> 3,
+      "num_class" -> 2,
       "booster" -> "gbtree",
       "numRound" -> 100,
       "num_workers" -> 4
