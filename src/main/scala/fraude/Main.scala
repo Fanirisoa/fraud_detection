@@ -35,13 +35,6 @@ import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.ml.feature.{StringIndexer, StringIndexerModel}
-import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
-import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.ml.feature._
-import org.apache.spark.ml.param.ParamMap
-import org.apache.spark.ml.tuning._
-import org.apache.spark.ml.{Pipeline, PipelineModel}
 
 
 
