@@ -74,77 +74,74 @@ object Main extends SparkJob with StrictLogging{
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
     val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
-    val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
 
-    val taux = (4000 * 1) / 284315
-/*
+    val taux: Double = (4000.00 * 1.00) / 284315.00
+    println(taux)
+
     val ids = Seq(0)
-    val dataReduiced = dataUse.filter(col("Class")===0).sample(2000)
-    dataReduiced.show
+    val dataZero = inputDataFrame.filter(col("Class") === 0).sample(taux)
+    val dataOne = inputDataFrame.filter(col("Class") === 1)
+
+    val dataUse = dataZero.union(dataOne)
 
 
- */
+/*
 
-
-
-    println("----------------------------")
-    println("  Compute BasicStatistics  :")
-    println("----------------------------")
-    val totalDiscreteMetrics: List[BasicStatistics.DiscreteMetric] = List(BasicStatistics.Category, BasicStatistics.CountDistinct, BasicStatistics.CountDiscrete, BasicStatistics.Frequencies,BasicStatistics.CountMissValuesDiscrete)
-    val totalContMetric : List[BasicStatistics.ContinuousMetric]=  List(BasicStatistics.Min, BasicStatistics.Max, BasicStatistics.Mean, BasicStatistics.Count, BasicStatistics.Variance, BasicStatistics.Stddev, BasicStatistics.Sum, BasicStatistics.Skewness, BasicStatistics.Kurtosis, BasicStatistics.Percentile25, BasicStatistics.Median, BasicStatistics.Percentile75, BasicStatistics.CountMissValues)
-
-
-
-    val discreteOps: List[BasicStatistics.DiscreteMetric] = totalDiscreteMetrics
-    val continuousOps:  List[BasicStatistics.ContinuousMetric] = totalContMetric
-
-
-    val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "MetricResult/")
+        println("----------------------------")
+        println("  Compute BasicStatistics  :")
+        println("----------------------------")
+        val totalDiscreteMetrics: List[BasicStatistics.DiscreteMetric] = List(BasicStatistics.Category, BasicStatistics.CountDistinct, BasicStatistics.CountDiscrete, BasicStatistics.Frequencies,BasicStatistics.CountMissValuesDiscrete)
+        val totalContMetric : List[BasicStatistics.ContinuousMetric]=  List(BasicStatistics.Min, BasicStatistics.Max, BasicStatistics.Mean, BasicStatistics.Count, BasicStatistics.Variance, BasicStatistics.Stddev, BasicStatistics.Sum, BasicStatistics.Skewness, BasicStatistics.Kurtosis, BasicStatistics.Percentile25, BasicStatistics.Median, BasicStatistics.Percentile75, BasicStatistics.CountMissValues)
 
 
 
-    val continAttrs: List[String] = listContnuousAttributes
-    val discAttrs: List[String] = listDiscreteAttributes
+        val discreteOps: List[BasicStatistics.DiscreteMetric] = totalDiscreteMetrics
+        val continuousOps:  List[BasicStatistics.ContinuousMetric] = totalContMetric
 
 
-    val timeA01= System.nanoTime
-    val discreteDataset = BasicStatistics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
-    val continuousDataset=  BasicStatistics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
-    val durationA01= (System.nanoTime - timeA01) / 1e9d
-    println("Time to compute  all the metrics: " + durationA01)
-    discreteDataset.show()
-
-    val timeA02= System.nanoTime
-    val resultatSave : DataFrame = unionDisContMetric(discreteDataset,continuousDataset,savePathData: Path)
-    val durationA02= (System.nanoTime - timeA02) / 1e9d
-    println("Time to make the union and to save : " + durationA02)
-    resultatSave.show()
-
-
-    println("-------------------------------")
-    println("  Compute Correlation Matrix  :")
-    println("-------------------------------")
-
-    val timeA03= System.nanoTime
-    val correlationMatrix: DataFrame = Correlation.computeCorrelationMatrix(dataUse, allAttributesList)
-    val durationA03= (System.nanoTime - timeA03) / 5e9d
-    println("Time to compute the correlation matrix: " + durationA03)
-    correlationMatrix.show(50)
+        val savePathData: Path = new Path(Settings.sparktrain.savePath ++ "MetricResult/")
 
 
 
+        val continAttrs: List[String] = listContnuousAttributes
+        val discAttrs: List[String] = listDiscreteAttributes
 
 
-    /*
+        val timeA01= System.nanoTime
+        val discreteDataset = BasicStatistics.computeDiscretMetric(dataUse, discAttrs, discreteOps, 1000)
+        val continuousDataset=  BasicStatistics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
+        val durationA01= (System.nanoTime - timeA01) / 1e9d
+        println("Time to compute  all the metrics: " + durationA01)
+
+
+        val timeA02= System.nanoTime
+        val resultatSave : DataFrame = unionDisContMetric(discreteDataset,continuousDataset,savePathData: Path)
+        val durationA02= (System.nanoTime - timeA02) / 1e9d
+        println("Time to make the union and to save : " + durationA02)
+        resultatSave.show()
+
+
+        println("-------------------------------")
+        println("  Compute Correlation Matrix  :")
+        println("-------------------------------")
+
+        val timeA03= System.nanoTime
+        val correlationMatrix: DataFrame = Correlation.computeCorrelationMatrix(dataUse, allAttributesList)
+        val durationA03= (System.nanoTime - timeA03) / 5e9d
+        println("Time to compute the correlation matrix: " + durationA03)
+        correlationMatrix.show(50)
+
+*/
+
 
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
     println("-------------------------------")
 
-    val dataReduice: DataFrame = dataUse.limit(10000)
+    val dataReduice: DataFrame = dataUse
 
-    val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Time").toList
+    val allAssembly :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val dataAssembly: DataFrame =  featureAssembler(dataReduice,allAssembly,"Class")
     dataAssembly.show()
 
@@ -170,6 +167,8 @@ object Main extends SparkJob with StrictLogging{
 
     val dataDiAssembly: DataFrame =  featureDiAssembler(resSmote,allAssembly)
     dataDiAssembly.show()
+
+
 
 
     println("-------------------------------")
@@ -202,7 +201,7 @@ object Main extends SparkJob with StrictLogging{
 
 
     val splitLevel2 : Double = 0.82
-    val foldNum = 4
+    val foldNum = 10
 
     val timeA07= System.nanoTime
     val resultPrediction2 =  xGBoostcrossValTune(
@@ -221,11 +220,6 @@ object Main extends SparkJob with StrictLogging{
     val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
     println(resultEvaluation)
     println(resultEvaluation2)
-
-
-
-
-     */
 
 
 
