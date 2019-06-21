@@ -71,15 +71,22 @@ object Main extends SparkJob with StrictLogging{
     val inputPathData: Path = new Path(Settings.sparktrain.inputPath ++ "fraud_detection" +"/"+ filename ++".csv")
 
     val inputDataFrame: DataFrame =  read(inputPathData)
-   // inputDataFrame.show(20)
-
-  //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
-   // val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount","Class").toList
+    val listContnuousAttributes: List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17", "V18", "V19", "V20", "V21", "V22", "V23", "V24", "V25", "V26", "V27", "V28", "Amount").toList
     val listDiscreteAttributes: List[String] =     Seq("Class").toList
     val dataUse: DataFrame = inputDataFrame
     //  val allAttributesList :List[String] =     Seq("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9","V10","V11",  "Amount","Class").toList
 
+    val taux = (4000 * 1) / 284315
 /*
+    val ids = Seq(0)
+    val dataReduiced = dataUse.filter(col("Class")===0).sample(2000)
+    dataReduiced.show
+
+
+ */
+
+
 
     println("----------------------------")
     println("  Compute BasicStatistics  :")
@@ -106,7 +113,7 @@ object Main extends SparkJob with StrictLogging{
     val continuousDataset=  BasicStatistics.computeContinuiousMetric(dataUse, continAttrs, continuousOps)
     val durationA01= (System.nanoTime - timeA01) / 1e9d
     println("Time to compute  all the metrics: " + durationA01)
-
+    discreteDataset.show()
 
     val timeA02= System.nanoTime
     val resultatSave : DataFrame = unionDisContMetric(discreteDataset,continuousDataset,savePathData: Path)
@@ -125,8 +132,11 @@ object Main extends SparkJob with StrictLogging{
     println("Time to compute the correlation matrix: " + durationA03)
     correlationMatrix.show(50)
 
-  */
 
+
+
+
+    /*
 
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
@@ -165,9 +175,6 @@ object Main extends SparkJob with StrictLogging{
     println("-------------------------------")
     println("        Using XGBOOST         :")
     println("-------------------------------")
-
-
-
 
     val splitLevel : Double = 0.8
     val listColFeatures : Array[String] = allAssembly.toArray
@@ -214,6 +221,16 @@ object Main extends SparkJob with StrictLogging{
     val resultEvaluation2: Double=  evalPrediction(resultPrediction2)
     println(resultEvaluation)
     println(resultEvaluation2)
+
+
+
+
+     */
+
+
+
+
+
 
 
 
