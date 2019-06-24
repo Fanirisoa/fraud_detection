@@ -33,6 +33,7 @@ import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -55,6 +56,7 @@ object Main extends SparkJob with StrictLogging{
     }
 
 
+    /*
     println("----------------------------")
     println("   Load the dataset.csv    :")
     println("----------------------------")
@@ -79,7 +81,7 @@ object Main extends SparkJob with StrictLogging{
     val dataUse = dataZero.union(dataOne)
 
 
-/*
+
 
         println("----------------------------")
         println("  Compute BasicStatistics  :")
@@ -125,9 +127,11 @@ object Main extends SparkJob with StrictLogging{
         println("Time to compute the correlation matrix: " + durationA03)
         correlationMatrix.show(50)
 
-*/
 
 
+     */
+
+/*
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
     println("-------------------------------")
@@ -218,6 +222,8 @@ object Main extends SparkJob with StrictLogging{
 
 
 
+ */
+
 
 
 
@@ -274,6 +280,12 @@ object Main extends SparkJob with StrictLogging{
 
 
  */
+    val sc = new SparkContext(conf)
+    val input = sc.parallelize(List(1, 2, 3, 4))
+    val result = input.map(x => x * x)
+    println(result.collect().mkString(","))
+
+
   }
 }
 
