@@ -33,6 +33,7 @@ import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -279,8 +280,22 @@ object Main extends SparkJob with StrictLogging{
 
 
  */
+    val input = sparkSession.sparkContext.parallelize(List(1, 2, 3, 4))
+    val result: RDD[Int] = input.map(x => x * x)
+    println(result.collect().mkString(","))
 
 
+    val lines = sparkSession.sparkContext.parallelize(List("hello world", "hi"))
+    val words: RDD[String] = lines.flatMap(line => line.split(" "))
+    println(words.first()) // returns "hello"
+
+
+    val input2 = sparkSession.sparkContext.parallelize(List(1, 2, 3, 3))
+    val res1: RDD[Int] = input2.flatMap(x => x.to(3))
+    println(res1.collect().mkString(","))
+
+    val sum = res1.reduce((x, y) => x + y)
+    println(sum.collect().mkString(","))
   }
 }
 
