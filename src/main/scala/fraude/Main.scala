@@ -281,8 +281,8 @@ object Main extends SparkJob with StrictLogging{
 
  */
     val input = sparkSession.sparkContext.parallelize(List(1, 2, 3, 4))
-    val result: RDD[Int] = input.map(x => x * x)
-    println(result.collect().mkString(","))
+    val result9: RDD[Int] = input.map(x => x * x)
+    println(result9.collect().mkString(","))
 
 
     val lines = sparkSession.sparkContext.parallelize(List("hello world", "hi"))
@@ -294,8 +294,24 @@ object Main extends SparkJob with StrictLogging{
     val res1: RDD[Int] = input2.flatMap(x => x.to(3))
     println(res1.collect().mkString(","))
 
-    val sum = res1.reduce((x, y) => x + y)
-    println(sum.collect().mkString(","))
+    val sum: Int = res1.reduce((x, y) => x + y)
+    println(sum)
+
+
+    val result: (Int, Int) = input.aggregate((0, 0))(
+      (acc, value) => (acc._1 + value, acc._2 + 1),
+      (acc1, acc2) => (acc1._1 + acc2._1, acc1._2 + acc2._2))
+    val avg: Double = result._1 / result._2.toDouble
+
+
+
+
+
+
+
+
+
+
   }
 }
 
