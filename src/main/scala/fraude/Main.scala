@@ -36,6 +36,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
+import org.apache.spark.storage.StorageLevel
 
 
 
@@ -305,12 +306,17 @@ object Main extends SparkJob with StrictLogging{
 
 
 
+    val result3 = input.map(x => x * x)
+    result3.persist(StorageLevel.DISK_ONLY)
+    println(result3.count())
+    println(result3.collect().mkString(","))
 
 
+    val inputRDD: RDD[(Int, Int)] = sparkSession.sparkContext.parallelize(List((1, 2), (3, 4), (3, 6)))
+    val reduiceRDD: RDD[(Int, Int)] = inputRDD.reduceByKey((x, y)=>x+y)
+    println(reduiceRDD.collect().mkString(","))
 
-
-
-
+    println(reduiceRDD.partitions.size)
 
   }
 }
