@@ -279,9 +279,6 @@ object Main extends SparkJob with StrictLogging{
 
 
  */
-    val input = SparkSession. .parallelize(List(1, 2, 3, 4))
-    val result = input.map(x => x * x)
-    println(result.collect().mkString(","))
 
 
   }
