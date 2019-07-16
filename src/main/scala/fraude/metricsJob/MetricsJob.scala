@@ -1,8 +1,8 @@
 package fraude.metricsJob
 
 import fraude.sparkjob.SparkJob
-import org.apache.hadoop.fs.Path
 
+import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.{DataFrame, _}
 import org.apache.spark.sql.functions.{col, lit, udf}
 import fraude.confSpark.handler.HdfsHandler._
