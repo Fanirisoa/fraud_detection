@@ -78,7 +78,7 @@ object Main extends SparkJob with StrictLogging{
     val ids = Seq(0)
     val dataZero = inputDataFrame.filter(col("Class") === 0).sample(taux)
     val dataOne = inputDataFrame.filter(col("Class") === 1)
-
+    println(dataZero.count())
     val dataUse = dataZero.union(dataOne)
 
 
