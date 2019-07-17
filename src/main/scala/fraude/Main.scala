@@ -132,7 +132,7 @@ object Main extends SparkJob with StrictLogging{
 
          */
 
-
+/*
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
     println("-------------------------------")
@@ -168,6 +168,15 @@ object Main extends SparkJob with StrictLogging{
 
 
 
+
+
+ */
+
+
+
+
+    
+/*
 
     println("-------------------------------")
     println("        Using XGBOOST         :")
@@ -219,7 +228,7 @@ object Main extends SparkJob with StrictLogging{
     println(resultEvaluation)
     println(resultEvaluation2)
 
-
+*/
 
 /*
     val fileiris: String = "iris"
