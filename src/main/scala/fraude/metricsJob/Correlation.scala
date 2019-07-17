@@ -50,7 +50,6 @@ object Correlation extends StrictLogging {
 
 
     val colRenamed: List[String] = "variableName" :: attributeChecked
-    println(colRenamed)
 
     val metrics: List[Column] = attributeChecked.flatMap(nameCol1 => attributeChecked.map(nameCol2 => corr(nameCol1,nameCol2)))
 
