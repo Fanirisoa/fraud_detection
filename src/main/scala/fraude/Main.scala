@@ -31,6 +31,7 @@ import fraude.metricsJob.BasicStatistics
 import fraude.smoteOverSample.smoteClass._
 import fraude.smoteOverSample.KnnJob._
 import fraude.metricsJob.Correlation
+import org.apache.calcite.avatica.ColumnMetaData.StructType
 import org.apache.hadoop.fs.Path
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
@@ -135,6 +136,7 @@ object Main extends SparkJob with StrictLogging{
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
     println("-------------------------------")
+
 
     val dataReduice: DataFrame = dataUse
 
