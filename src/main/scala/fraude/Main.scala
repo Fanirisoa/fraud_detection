@@ -83,7 +83,7 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-    /*
+
             println("----------------------------")
             println("  Compute BasicStatistics  :")
             println("----------------------------")
@@ -130,7 +130,7 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-         */
+
 
 /*
     println("-------------------------------")
@@ -175,7 +175,7 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-    
+
 /*
 
     println("-------------------------------")
