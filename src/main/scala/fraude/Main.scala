@@ -132,7 +132,6 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-/*
     println("-------------------------------")
     println("    Compute KNNcalculation    :")
     println("-------------------------------")
@@ -169,8 +168,6 @@ object Main extends SparkJob with StrictLogging{
 
 
 
-
- */
 
 
 
