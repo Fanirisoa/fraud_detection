@@ -58,7 +58,6 @@ object smoteClass extends StrictLogging {
     // Filter and add new instances
     val b2: DataFrame = b1.withColumn("ndtata", md(col("k1"), col("k2"))).select("ndtata")
     val b3: Dataset[Row] = b2.withColumn("feature", explode(col("ndtata"))).select("feature").dropDuplicates
-println(b3.count())
 
     /*
     b3.show()
