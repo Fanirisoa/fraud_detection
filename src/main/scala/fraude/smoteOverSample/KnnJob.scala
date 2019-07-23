@@ -11,6 +11,15 @@ import org.apache.spark.sql.functions._
 
 object KnnJob extends StrictLogging {
 
+
+  /**
+    *
+    * @param dataFinal :
+    * @param colList : The list of all
+    * @param colLabel : The name of the column that contains the label
+    * @return
+    */
+
   def featureAssembler(dataFinal: DataFrame,
                        colList: List[String],
                        colLabel : String
@@ -25,6 +34,12 @@ object KnnJob extends StrictLogging {
       .select(colFinal.head, colFinal.tail: _*)
   }
 
+  /**
+    * Function to desaggregate a column that are aggregate
+    * @param dataFinal : The dataframe that contain the column to be Diassembler
+    * @param colList : The list of the variable contain inside of the column
+    * @return : dataframe with
+    */
 
    def featureDiAssembler(dataFinal: DataFrame,
                          colList: List[String]
@@ -45,7 +60,16 @@ object KnnJob extends StrictLogging {
   }
 
 
-
+  /**
+    * k Nearest Neighbors :  classification on sub-groupe
+    * @param dataFinal : initial data
+    * @param feature : The metric that we need to compute (distance)
+    * @param label  : The value of the variable to be predict
+    * @param reqrows : parameter associate to
+    * @param BucketLength : parameter associate to the bucket
+    * @param NumHashTables : parameter
+    * @return
+    */
 
 
 
