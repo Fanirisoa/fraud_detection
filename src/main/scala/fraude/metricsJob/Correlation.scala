@@ -6,9 +6,9 @@ import org.apache.spark.sql.{Column, DataFrame}
 
 
 object Correlation extends StrictLogging {
-  
+
   /**
-    *
+    * To computhe the correlation matrix associated to each variable
     * @param nameCol
     * @param metricFrame
     * @return
@@ -36,6 +36,12 @@ object Correlation extends StrictLogging {
 
   }
 
+  /** Compute the correlation matrix
+    *
+    * @param dataInit : the initial data
+    * @param attributes : the list of attributes
+    * @return : the correlation matrix
+    */
 
   def computeCorrelationMatrix(
                                 dataInit: DataFrame,
