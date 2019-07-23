@@ -13,9 +13,8 @@ object KnnJob extends StrictLogging {
 
 
   /**
-    *
-    * @param dataFinal :
-    * @param colList : The list of all
+    * @param dataFinal : The dataframe to be aggregate
+    * @param colList : The list of all column to be aggregate
     * @param colLabel : The name of the column that contains the label
     * @return
     */
