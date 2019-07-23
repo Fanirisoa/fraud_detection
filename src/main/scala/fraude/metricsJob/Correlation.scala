@@ -6,7 +6,13 @@ import org.apache.spark.sql.{Column, DataFrame}
 
 
 object Correlation extends StrictLogging {
-
+  
+  /**
+    *
+    * @param nameCol
+    * @param metricFrame
+    * @return
+    */
   def regroupCorrelationByVariable(nameCol: String, metricFrame: DataFrame ): DataFrame = {
     //Get the whole list of headers that contains the column name
     val listColumns: Array[String] = metricFrame.columns.filter(_.contains("corr("+nameCol+",")).sorted
