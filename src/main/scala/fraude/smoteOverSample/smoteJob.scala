@@ -9,7 +9,12 @@ import fraude.smoteOverSample.KnnJob._
 
 object smoteClass extends StrictLogging {
 
-
+  /**
+    * Function to compute the smote values of the new entries obtain from a combination of two entries
+    * @param key1 : The key associate to the first extremity (first values)
+    * @param key2 : The key associate to the second extremity (first values)
+    * @return
+    */
 
   def smoteCalc(key1: org.apache.spark.ml.linalg.Vector, key2: org.apache.spark.ml.linalg.Vector): Array[Vector] ={
     val resArray: Array[Vector] = Array(key1, key2)
@@ -20,6 +25,17 @@ object smoteClass extends StrictLogging {
     resArray :+ org.apache.spark.ml.linalg.Vectors.dense(res)
   }
 
+
+  /**
+    *
+    * @param inputFrame
+    * @param featureList
+    * @param label
+    * @param percentOver
+    * @param BucketLength
+    * @param NumHashTables
+    * @return
+    */
 
   def Smote(
              inputFrame:org.apache.spark.sql.DataFrame,
